@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Cadastro para Professor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Formulário de Cadastro</h1>
+        <form id="meuFormulario">
+
+            <!-- Seção 1: Dados Pessoais -->
+            <fieldset>
+                <legend>Dados Pessoais</legend>
+                <div class="input-group">
+                    <label for="nome">Nome Completo:</label>
+                    <input type="text" id="nome" name="nome" required>
+                </div>
+                <div class="input-group">
+                    <label for="cpf">CPF:</label>
+                    <input type="text" id="cpf" name="cpf" required>
+                </div>
+                <div class="input-group">
+                    <label for="email">E-mail:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+            </fieldset>
+
+            <!-- Seção 2: Disponibilidade -->
+            <fieldset>
+                <legend>Disponibilidade de Dias/Turnos</legend>
+                <p>Marque os horários disponíveis:</p>
+                <div class="horarios-grid">
+                    <!-- Segunda-feira -->
+                    <div class="dia-group">
+                        <span class="dia-label">Segunda:</span>
+                        <label><input type="checkbox" name="segManha"> Manhã</label>
+                        <label><input type="checkbox" name="segTarde"> Tarde</label>
+                    </div>
+                    <!-- Terça-feira -->
+                    <div class="dia-group">
+                        <span class="dia-label">Terça:</span>
+                        <label><input type="checkbox" name="terManha"> Manhã</label>
+                        <label><input type="checkbox" name="terTarde"> Tarde</label>
+                    </div>
+                    <!-- Quarta-feira -->
+                    <div class="dia-group">
+                        <span class="dia-label">Quarta:</span>
+                        <label><input type="checkbox" name="quaManha"> Manhã</label>
+                        <label><input type="checkbox" name="quaTarde"> Tarde</label>
+                    </div>
+                    <!-- Quinta-feira -->
+                    <div class="dia-group">
+                        <span class="dia-label">Quinta:</span>
+                        <label><input type="checkbox" name="quiManha"> Manhã</label>
+                        <label><input type="checkbox" name="quiTarde"> Tarde</label>
+                    </div>
+                    <!-- Sexta-feira -->
+                    <div class="dia-group">
+                        <span class="dia-label">Sexta:</span>
+                        <label><input type="checkbox" name="sexManha"> Manhã</label>
+                        <label><input type="checkbox" name="sexTarde"> Tarde</label>
+                    </div>
+                    <!-- Sábado -->
+                    <div class="dia-group">
+                        <span class="dia-label">Sábado:</span>
+                        <label><input type="checkbox" name="sabManha"> Manhã</label>
+                        <label><input type="checkbox" name="sabTarde"> Tarde</label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- Seção 3: Outras Informações -->
+            <fieldset>
+                <legend>Outras Informações</legend>
+                <div class="input-group">
+                    <label for="disciplinas">Disciplinas de Interesse:</label>
+                    <input type="text" id="disciplinas" name="disciplinas" placeholder="Ex: Matemática, Física, Português">
+                </div>
+                <div class="input-group">
+                    <label for="veiculo">Possui Veículo?</label>
+                    <select id="veiculo" name="veiculo" required>
+                        <option value="">Selecione...</option>
+                        <option value="Sim">Sim</option>
+                        <option value="Não">Não</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="expAulas">Experiência com Aulas:</label>
+                    <textarea id="expAulas" name="expAulas" rows="3"></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="expNeuro">Experiência com Neurociência:</label>
+                    <textarea id="expNeuro" name="expNeuro" rows="3"></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="descricao">Descrição Adicional:</label>
+                    <textarea id="descricao" name="descricao" rows="4"></textarea>
+                </div>
+            </fieldset>
+
+            <button type="submit">Enviar Cadastro</button>
+        </form>
+        <div id="mensagemResultado"></div>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>
