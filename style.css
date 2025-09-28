@@ -436,7 +436,7 @@ input:checked + .slider:before {
     transition: all 0.3s ease;
     background: white;
 }
-}
+
 
 .dropdown-btn {
   width: 100%;
