@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // atulização - Lista de Disciplinas (dropdown com checkboxes)
 
-const dropdownBtn = document.getElementById("dropdownBtn");
+const dropdownBtn = document.getElementById("disciplinas");
 const dropdownContent = document.getElementById("dropdownContent");
 const checkboxes = dropdownContent.querySelectorAll("input[type='checkbox']");
 
