@@ -82,11 +82,11 @@ document.addEventListener('DOMContentLoaded', function() {
             showSection(5);
 
         } catch (error) {
-            console.error('Erro ao enviar dados:', error);
+            // console.error('Erro ao enviar dados:', error);
             // alert("Ops! Houve um erro ao enviar seu cadastro. Tente novamente.");
             
-            botaoSubmit.disabled = false;
-            botaoSubmit.textContent = 'Enviar Cadastro';
+            // botaoSubmit.disabled = false;
+            // botaoSubmit.textContent = 'Enviar Cadastro';
         }
     });
 });
