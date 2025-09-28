@@ -1,14 +1,24 @@
-const disciplinasSelect = document.getElementById("disciplinas");
-const disciplinasText = document.getElementById("disciplinasText");
+const dropdownBtn = document.getElementById("dropdownBtn");
+const dropdownContent = document.getElementById("dropdownContent");
+const checkboxes = dropdownContent.querySelectorAll("input[type='checkbox']");
 
-// Ao clicar no campo de texto, abre a lista suspensa
-disciplinasText.addEventListener("click", () => {
-    disciplinasSelect.style.display = "block";
+dropdownBtn.addEventListener("click", () => {
+  dropdownContent.style.display = dropdownContent.style.display === "block" ? "none" : "block";
 });
 
-// Atualiza o campo de texto sempre que mudar a seleção
-disciplinasSelect.addEventListener("change", () => {
-    const selecionadas = Array.from(disciplinasSelect.selectedOptions).map(opt => opt.value);
-    disciplinasText.value = selecionadas.join(", ");
-    disciplinasSelect.style.display = "none"; // Fecha a lista após a seleção
+// Atualiza o texto do botão com as opções selecionadas
+checkboxes.forEach(cb => {
+  cb.addEventListener("change", () => {
+    const selecionadas = Array.from(checkboxes)
+                              .filter(i => i.checked)
+                              .map(i => i.value);
+    dropdownBtn.textContent = selecionadas.length > 0 ? selecionadas.join(", ") : "Selecione as disciplinas que você pode lecionar";
+  });
+});
+
+// Fecha dropdown se clicar fora
+document.addEventListener("click", function(event) {
+  if (!event.target.closest(".dropdown")) {
+    dropdownContent.style.display = "none";
+  }
 });

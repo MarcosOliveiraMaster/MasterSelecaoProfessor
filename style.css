@@ -423,6 +423,40 @@ input:checked + .slider:before {
     box-shadow: 0 0 0 3px rgba(255, 123, 51, 0.2);
 }
 
+.dropdown {
+  position: relative;
+  width: 250px;
+}
+
+.dropdown-btn {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  background: #fff;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  width: 100%;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 1;
+}
+
+.dropdown-content label {
+  display: block;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.dropdown-content label:hover {
+  background-color: #f0f0f0;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .header h1 {
