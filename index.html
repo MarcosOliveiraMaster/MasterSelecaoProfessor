@@ -3,56 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário de Cadastro para Professor</title>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600;700&family=Comfortaa:wght@400;500;600&display=swap" rel="stylesheet">
-    <link href="style.css" rel="stylesheet">
-    
+    <title>Formulário de Pré-Seleção para Professores de Aulas Particulares Master Educação</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Lexend:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js" defer></script>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Formulário de Pré-Seleção para Professores de Aulas Particulares Master Educação</h1>
+            <h1>Formulário de Pré-Seleção para Professores</h1>
         </div>
-        
+
         <div class="progress-bar">
-            <div class="progress-step active" data-step="0">
+            <div class="progress-step active">
                 <div class="step-number">1</div>
                 <div class="step-label">Apresentação</div>
             </div>
-            <div class="progress-step" data-step="1">
+            <div class="progress-step">
                 <div class="step-number">2</div>
                 <div class="step-label">Dados Pessoais</div>
             </div>
-            <div class="progress-step" data-step="2">
+            <div class="progress-step">
                 <div class="step-number">3</div>
                 <div class="step-label">Disponibilidade</div>
             </div>
-            <div class="progress-step" data-step="3">
+            <div class="progress-step">
                 <div class="step-number">4</div>
                 <div class="step-label">Outras Informações</div>
             </div>
         </div>
 
         <form id="meuFormulario">
-            <!-- Seção 0: Apresentação -->
-            <div class="form-section active" id="section0">
+            <div class="form-section active" id="section1">
                 <div class="introduction">
-                    <p><strong>Olá Candidato! ✨</strong></p>
-                    <p>Parabéns por ter chegado até aqui! É com grande felicidade que você foi pré-selecionado para integrar a equipe de professores da <strong>Master Educação</strong>! 🎉🎊</p>
+                    <p>Olá Candidato! ✨</p>
+                    <p>Parabéns por ter chegado até aqui! É com grande felicidade que você foi pré-selecionado para integrar a equipe de professores da Master Educação! 🎉🎊</p>
                     <p>Estamos muito próximos de contratá-lo e gostaríamos de conhecer um pouco mais sobre suas habilidades, experiências e práticas de ensino. 👩‍🏫📚</p>
                     <p>Por favor, preencha nosso formulário de pré-seleção, que ajudará a alinhar expectativas e identificar seu potencial. 📝💻</p>
-                    <p>Conheça mais sobre a Master Educação clicando aqui em nossa página do Instagram: <a href="https://instagram.com/mastereducacao" target="_blank">MasterEducação</a>! 🌎</p>
-                    <p><strong>Dúvidas?</strong> entre em contato conosco pelo número: <strong>(82) 9.8886-2575</strong> 📱</p>
+                    <p>Conheça mais sobre a Master Educação clicando aqui em nossa página do Instagram: <a href="https://www.instagram.com/mastereducacao" target="_blank">MasterEducação</a>! 🌎</p>
+                    <p>Dúvidas? Entre em contato conosco pelo número: <strong>(82) 9.8886-2575</strong> 📱</p>
                 </div>
-                
                 <div class="nav-buttons">
                     <button type="button" class="btn btn-prev" disabled>Voltar</button>
-                    <button type="button" class="btn btn-next" onclick="showSection(1)">Avançar</button>
+                    <button type="button" class="btn btn-next" onclick="showSection(2)">Avançar</button>
                 </div>
             </div>
 
-            <!-- Seção 1: Dados Pessoais -->
-            <div class="form-section" id="section1">
+            <div class="form-section" id="section2">
                 <h2 class="section-title">Dados Pessoais</h2>
                 <div class="input-group">
                     <label for="nome">Nome Completo:</label>
@@ -66,81 +64,73 @@
                     <label for="email">E-mail:</label>
                     <input type="email" id="email" name="email" class="input-field" required>
                 </div>
-                
-                <div class="nav-buttons">
-                    <button type="button" class="btn btn-prev" onclick="showSection(0)">Voltar</button>
-                    <button type="button" class="btn btn-next" onclick="showSection(2)">Avançar</button>
-                </div>
-            </div>
-
-            <!-- Seção 2: Disponibilidade -->
-            <div class="form-section" id="section2">
-                <h2 class="section-title">Disponibilidade de Dias/Turnos</h2>
-                <p class="schedule-instruction">Marque os turnos em que poderá dar aulas nos dias abaixo:</p>
-                
-                <table class="schedule-table">
-                    <thead>
-                        <tr>
-                            <th class="day-header">Turno</th>
-                            <th class="day-header">Segunda</th>
-                            <th class="day-header">Terça</th>
-                            <th class="day-header">Quarta</th>
-                            <th class="day-header">Quinta</th>
-                            <th class="day-header">Sexta</th>
-                            <th class="day-header">Sábado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Manhã</td>
-                            <td><input type="checkbox" name="segManha" id="segManha"></td>
-                            <td><input type="checkbox" name="terManha" id="terManha"></td>
-                            <td><input type="checkbox" name="quaManha" id="quaManha"></td>
-                            <td><input type="checkbox" name="quiManha" id="quiManha"></td>
-                            <td><input type="checkbox" name="sexManha" id="sexManha"></td>
-                            <td><input type="checkbox" name="sabManha" id="sabManha"></td>
-                        </tr>
-                        <tr>
-                            <td>Tarde</td>
-                            <td><input type="checkbox" name="segTarde" id="segTarde"></td>
-                            <td><input type="checkbox" name="terTarde" id="terTarde"></td>
-                            <td><input type="checkbox" name="quaTarde" id="quaTarde"></td>
-                            <td><input type="checkbox" name="quiTarde" id="quiTarde"></td>
-                            <td><input type="checkbox" name="sexTarde" id="sexTarde"></td>
-                            <td><input type="checkbox" name="sabTarde" id="sabTarde"></td>
-                        </tr>
-                    </tbody>
-                </table>
-                
                 <div class="nav-buttons">
                     <button type="button" class="btn btn-prev" onclick="showSection(1)">Voltar</button>
                     <button type="button" class="btn btn-next" onclick="showSection(3)">Avançar</button>
                 </div>
             </div>
 
-            <!-- Seção 3: Outras Informações -->
             <div class="form-section" id="section3">
+                <h2 class="section-title">Disponibilidade de Dias/Turnos</h2>
+                <p class="schedule-instruction">Marque os turnos em que poderá dar aulas nos dias abaixo:</p>
+                <table class="schedule-table">
+                    <tr>
+                        <th>Turno</th>
+                        <th>Segunda</th>
+                        <th>Terça</th>
+                        <th>Quarta</th>
+                        <th>Quinta</th>
+                        <th>Sexta</th>
+                        <th>Sábado</th>
+                    </tr>
+                    <tr>
+                        <td class="day-header">Manhã</td>
+                        <td><input type="checkbox" name="segManha" id="segManha"></td>
+                        <td><input type="checkbox" name="terManha" id="terManha"></td>
+                        <td><input type="checkbox" name="quaManha" id="quaManha"></td>
+                        <td><input type="checkbox" name="quiManha" id="quiManha"></td>
+                        <td><input type="checkbox" name="sexManha" id="sexManha"></td>
+                        <td><input type="checkbox" name="sabManha" id="sabManha"></td>
+                    </tr>
+                    <tr>
+                        <td class="day-header">Tarde</td>
+                        <td><input type="checkbox" name="segTarde" id="segTarde"></td>
+                        <td><input type="checkbox" name="terTarde" id="terTarde"></td>
+                        <td><input type="checkbox" name="quaTarde" id="quaTarde"></td>
+                        <td><input type="checkbox" name="quiTarde" id="quiTarde"></td>
+                        <td><input type="checkbox" name="sexTarde" id="sexTarde"></td>
+                        <td><input type="checkbox" name="sabTarde" id="sabTarde"></td>
+                    </tr>
+                </table>
+                <div class="nav-buttons">
+                    <button type="button" class="btn btn-prev" onclick="showSection(2)">Voltar</button>
+                    <button type="button" class="btn btn-next" onclick="showSection(4)">Avançar</button>
+                </div>
+            </div>
+
+            <div class="form-section" id="section4">
                 <h2 class="section-title">Outras Informações</h2>
-                
-               <div class="dropdown">
-                    <div class="dropdown-btn" id="dropdownBtn">Selecione as disciplinas que você pode lecionar</div>
-                    <div class="dropdown-content" id="dropdownContent">
-                        <label><input type="checkbox" value="Biologia"> Biologia</label>
-                        <label><input type="checkbox" value="Ciências"> Ciências</label>
-                        <label><input type="checkbox" value="Física"> Física</label>
-                        <label><input type="checkbox" value="Geografia"> Geografia</label>
-                        <label><input type="checkbox" value="História"> História</label>
-                        <label><input type="checkbox" value="Inglês"> Inglês</label>
-                        <label><input type="checkbox" value="Literatura"> Literatura</label>
-                        <label><input type="checkbox" value="Matemática"> Matemática</label>
-                        <label><input type="checkbox" value="Pedagogia"> Pedagogia</label>
-                        <label><input type="checkbox" value="Português"> Português</label>
-                        <label><input type="checkbox" value="Química"> Química</label>
+                <div class="input-group">
+                    <label>Selecione as disciplinas que você pode lecionar</label>
+                    <div class="dropdown">
+                        <div class="dropdown-btn" id="dropdownBtn">Selecione as disciplinas que você pode lecionar</div>
+                        <div class="dropdown-content" id="dropdownContent">
+                            <label><input type="checkbox" name="disciplinas" id="disciplina-biologia" value="Biologia"> Biologia</label>
+                            <label><input type="checkbox" name="disciplinas" id="disciplina-ciencias" value="Ciências"> Ciências</label>
+                            <label><input type="checkbox" name="disciplinas" id="disciplina-fisica" value="Física"> Física</label>
+                            <label><input type="checkbox" name="disciplinas" id="disciplina-geografia" value="Geografia"> Geografia</label>
+                            <label><input type="checkbox" name="disciplinas" id="disciplina-historia" value="História"> História</label>
+                            <label><input type="checkbox" name="disciplinas" id="disciplina-ingles" value="Inglês"> Inglês</label>
+                            <label><input type="checkbox" name="disciplinas" id="disciplina-literatura" value="Literatura"> Literatura</label>
+                            <label><input type="checkbox" name="disciplinas" id="disciplina-matematica" value="Matemática"> Matemática</label>
+                            <label><input type="checkbox" name="disciplinas" id="disciplina-pedagogia" value="Pedagogia"> Pedagogia</label>
+                            <label><input type="checkbox" name="disciplinas" id="disciplina-portugues" value="Português"> Português</label>
+                            <label><input type="checkbox" name="disciplinas" id="disciplina-quimica" value="Química"> Química</label>
+                        </div>
                     </div>
                 </div>
-                
                 <div class="input-group">
-                    <label for="veiculo">Possui Veículo?</label>
+                    <label>Possui Veículo?</label>
                     <div class="vehicle-toggle">
                         <label class="toggle-label toggle-no">Não</label>
                         <label class="toggle-switch">
@@ -150,115 +140,49 @@
                         <label class="toggle-label toggle-yes">Sim</label>
                     </div>
                 </div>
-                
                 <div class="input-group">
                     <label for="expAulas">Experiência com Aulas:</label>
                     <textarea id="expAulas" name="expAulas" class="input-field textarea-field"></textarea>
                 </div>
-                
                 <div class="input-group">
                     <label for="expNeuro">Experiência com Neurociência:</label>
                     <textarea id="expNeuro" name="expNeuro" class="input-field textarea-field"></textarea>
                 </div>
-                
                 <div class="input-group">
                     <label for="descricao">Descrição Adicional:</label>
                     <textarea id="descricao" name="descricao" class="input-field textarea-field"></textarea>
                 </div>
-                
                 <div class="nav-buttons">
-                    <button type="button" class="btn btn-prev" onclick="showSection(2)">Voltar</button>
+                    <button type="button" class="btn btn-prev" onclick="showSection(3)">Voltar</button>
                     <button type="submit" class="btn btn-submit">Enviar Cadastro</button>
                 </div>
             </div>
         </form>
 
-        <!-- Seção 4: Sucesso -->
-        <div class="form-section" id="section4">
-            <div class="success-section">
-                <h2 class="success-title">Inscrição Enviada! ✅</h2>
-                <p class="success-message">
-                    Obrigado por se inscrever como professor na <strong>Master Educação</strong>! 
-                    Em breve, nossa equipe entrará em contato com você para os próximos passos.
-                </p>
-                <div class="contact-info">
-                    Mais dúvidas? Entre em contato com: <strong>(82) 9.8886-2575</strong> 📱
-                </div>
+        <div class="form-section success-section" id="section5">
+            <h2 class="success-title">Inscrição Enviada! ✅</h2>
+            <p class="success-message">
+                Obrigado por se inscrever como professor na Master Educação! 
+                Em breve, nossa equipe entrará em contato com você para os próximos passos.
+            </p>
+            <div class="contact-info">
+                Mais dúvidas? Entre em contato com: <strong>(82) 9.8886-2575</strong> 📱
             </div>
         </div>
     </div>
 
-    
-
     <script>
         function showSection(sectionNumber) {
-            // Hide all sections
             document.querySelectorAll('.form-section').forEach(section => {
                 section.classList.remove('active');
             });
-            
-            // Show selected section
             document.getElementById(`section${sectionNumber}`).classList.add('active');
-            
-            // Update progress bar
+
             document.querySelectorAll('.progress-step').forEach(step => {
                 step.classList.remove('active');
             });
-            document.querySelector(`.progress-step[data-step="${sectionNumber}"]`).classList.add('active');
+            document.querySelector(`.progress-step:nth-child(${sectionNumber})`).classList.add('active');
         }
-
-        document.getElementById('meuFormulario').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get selected disciplines
-            const disciplinasSelect = document.getElementById('disciplinas');
-            const selectedDisciplines = Array.from(disciplinasSelect.selectedOptions)
-                .map(option => option.value)
-                .join(', ');
-            
-            // Get vehicle status
-            const hasVehicle = document.getElementById('veiculo').checked ? 'Sim' : 'Não';
-            
-            // Create form data object
-            const formData = {
-                nome: document.getElementById('nome').value,
-                cpf: document.getElementById('cpf').value,
-                email: document.getElementById('email').value,
-                disciplinas: selectedDisciplines,
-                veiculo: hasVehicle,
-                expAulas: document.getElementById('expAulas').value,
-                expNeuro: document.getElementById('expNeuro').value,
-                descricao: document.getElementById('descricao').value
-            };
-            
-            // Log form data (in real implementation, send to server)
-            console.log('Form Data:', formData);
-            
-            // Show success section
-            showSection(4);
-        });
-
-        // Add modern checkbox styling to schedule table
-        document.querySelectorAll('.schedule-table input[type="checkbox"]').forEach(checkbox => {
-            const td = checkbox.parentElement;
-            const customCheckbox = document.createElement('div');
-            customCheckbox.className = 'checkbox-custom';
-            const container = document.createElement('label');
-            container.className = 'checkbox-container';
-            container.style.justifyContent = 'center';
-            container.style.margin = '0';
-            
-            checkbox.style.display = 'none';
-            container.appendChild(checkbox);
-            container.appendChild(customCheckbox);
-            td.innerHTML = '';
-            td.appendChild(container);
-        });
     </script>
-
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="script.js"></script>
-    <script src="functions.js"></script>
-
 </body>
 </html>

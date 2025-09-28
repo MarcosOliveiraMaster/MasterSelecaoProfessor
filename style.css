@@ -149,7 +149,6 @@ body {
     box-shadow: 0 0 0 3px rgba(255, 123, 51, 0.2);
 }
 
-/* Modern Checkbox Styling */
 .checkbox-container {
     display: flex;
     align-items: center;
@@ -193,7 +192,6 @@ body {
     opacity: 1;
 }
 
-/* Schedule Table */
 .schedule-instruction {
     margin-bottom: 20px;
     color: var(--texto2);
@@ -234,7 +232,6 @@ body {
     background: white !important;
 }
 
-/* Vehicle Toggle */
 .vehicle-toggle {
     display: flex;
     align-items: center;
@@ -301,7 +298,6 @@ input:checked + .slider:before {
     color: var(--texto2);
 }
 
-/* Navigation Buttons */
 .nav-buttons {
     display: flex;
     justify-content: space-between;
@@ -349,13 +345,11 @@ input:checked + .slider:before {
     font-size: 18px;
 }
 
-/* Textarea */
 .textarea-field {
     min-height: 100px;
     resize: vertical;
 }
 
-/* Introduction Section */
 .introduction {
     line-height: 1.6;
     color: var(--texto1);
@@ -376,7 +370,6 @@ input:checked + .slider:before {
     text-decoration: underline;
 }
 
-/* Success Section */
 .success-section {
     text-align: center;
     padding: 40px 30px;
@@ -405,7 +398,6 @@ input:checked + .slider:before {
     font-size: 16px;
 }
 
-/* Select Multiple */
 .select-multiple {
     width: 100%;
     padding: 14px;
@@ -424,63 +416,61 @@ input:checked + .slider:before {
 }
 
 .dropdown {
- position: relative;
-  width: 100%;
-  margin-bottom: 20px;
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
 }
 
-
 .dropdown-btn {
-width: 100%;
-  padding: 14px;
-  border: 2px solid var(--border-light);
-  border-radius: 12px;
-  font-family: 'Comfortaa', sans-serif;
-  font-size: 16px;
-  background: white;
-  cursor: pointer;
-  text-align: left;
-  transition: all 0.3s ease;
+    width: 100%;
+    padding: 14px;
+    border: 2px solid var(--border-light);
+    border-radius: 12px;
+    font-family: 'Comfortaa', sans-serif;
+    font-size: 16px;
+    background: white;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.3s ease;
 }
 
 .dropdown-content {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  background-color: #fff;
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 1000;
-  box-shadow: var(--shadow);
-  padding: 10px;
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: var(--shadow);
+    padding: 10px;
 }
 
 .dropdown-btn:hover {
-  border-color: var(--titulo2);
+    border-color: var(--titulo2);
 }
 
 .dropdown-content label {
-  display: block;
-  padding: 8px 12px;
-  cursor: pointer;
-  border-radius: 6px;
-  margin: 2px 0;
-  transition: background-color 0.2s;
+    display: block;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    margin: 2px 0;
+    transition: background-color 0.2s;
 }
 
 .dropdown-content label:hover {
-  background-color: var(--bg-light);
+    background-color: var(--bg-light);
 }
 
 .dropdown-content input[type="checkbox"] {
-  margin-right: 8px;
+    margin-right: 8px;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .header h1 {
         font-size: 20px;
