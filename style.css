@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f4f7fe;
@@ -135,7 +135,8 @@ button:disabled {
 .erro {
     background-color: #fee2e2;
     color: #991b1b;
-=======
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f4f7fe;
@@ -272,5 +273,5 @@ button:disabled {
 .erro {
     background-color: #fee2e2;
     color: #991b1b;
->>>>>>> fb1b63d5040210cdb6a7e8b64ff9208ae383db33
+
 }
