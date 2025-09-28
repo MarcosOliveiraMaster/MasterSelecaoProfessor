@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
-// atulização - apagar aqui
+// atulização - Lista de Disciplinas (dropdown com checkboxes)
 
 const dropdownBtn = document.getElementById("dropdownBtn");
 const dropdownContent = document.getElementById("dropdownContent");
