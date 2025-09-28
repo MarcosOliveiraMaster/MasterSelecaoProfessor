@@ -9,103 +9,253 @@
 </head>
 <body>
     <div class="container">
-        <h1>Formulário de Cadastro</h1>
+        <div class="header">
+            <h1>Formulário de Pré-Seleção para Professores de Aulas Particulares Master Educação</h1>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-step active" data-step="0">
+                <div class="step-number">1</div>
+                <div class="step-label">Apresentação</div>
+            </div>
+            <div class="progress-step" data-step="1">
+                <div class="step-number">2</div>
+                <div class="step-label">Dados Pessoais</div>
+            </div>
+            <div class="progress-step" data-step="2">
+                <div class="step-number">3</div>
+                <div class="step-label">Disponibilidade</div>
+            </div>
+            <div class="progress-step" data-step="3">
+                <div class="step-number">4</div>
+                <div class="step-label">Outras Informações</div>
+            </div>
+        </div>
+
         <form id="meuFormulario">
+            <!-- Seção 0: Apresentação -->
+            <div class="form-section active" id="section0">
+                <div class="introduction">
+                    <p><strong>Olá Candidato! ✨</strong></p>
+                    <p>Parabéns por ter chegado até aqui! É com grande felicidade que você foi pré-selecionado para integrar a equipe de professores da <strong>Master Educação</strong>! 🎉🎊</p>
+                    <p>Estamos muito próximos de contratá-lo e gostaríamos de conhecer um pouco mais sobre suas habilidades, experiências e práticas de ensino. 👩‍🏫📚</p>
+                    <p>Por favor, preencha nosso formulário de pré-seleção, que ajudará a alinhar expectativas e identificar seu potencial. 📝💻</p>
+                    <p>Conheça mais sobre a Master Educação clicando aqui em nossa página do Instagram: <a href="https://instagram.com/mastereducacao" target="_blank">MasterEducação</a>! 🌎</p>
+                    <p><strong>Dúvidas?</strong> entre em contato conosco pelo número: <strong>(82) 9.8886-2575</strong> 📱</p>
+                </div>
+                
+                <div class="nav-buttons">
+                    <button type="button" class="btn btn-prev" disabled>Voltar</button>
+                    <button type="button" class="btn btn-next" onclick="showSection(1)">Avançar</button>
+                </div>
+            </div>
 
             <!-- Seção 1: Dados Pessoais -->
-            <fieldset>
-                <legend>Dados Pessoais</legend>
+            <div class="form-section" id="section1">
+                <h2 class="section-title">Dados Pessoais</h2>
                 <div class="input-group">
                     <label for="nome">Nome Completo:</label>
-                    <input type="text" id="nome" name="nome" required>
+                    <input type="text" id="nome" name="nome" class="input-field" required>
                 </div>
                 <div class="input-group">
                     <label for="cpf">CPF:</label>
-                    <input type="text" id="cpf" name="cpf" required>
+                    <input type="text" id="cpf" name="cpf" class="input-field" required>
                 </div>
                 <div class="input-group">
                     <label for="email">E-mail:</label>
-                    <input type="email" id="email" name="email" required>
+                    <input type="email" id="email" name="email" class="input-field" required>
                 </div>
-            </fieldset>
+                
+                <div class="nav-buttons">
+                    <button type="button" class="btn btn-prev" onclick="showSection(0)">Voltar</button>
+                    <button type="button" class="btn btn-next" onclick="showSection(2)">Avançar</button>
+                </div>
+            </div>
 
             <!-- Seção 2: Disponibilidade -->
-            <fieldset>
-                <legend>Disponibilidade de Dias/Turnos</legend>
-                <p>Marque os horários disponíveis:</p>
-                <div class="horarios-grid">
-                    <!-- Segunda-feira -->
-                    <div class="dia-group">
-                        <span class="dia-label">Segunda:</span>
-                        <label><input type="checkbox" name="segManha"> Manhã</label>
-                        <label><input type="checkbox" name="segTarde"> Tarde</label>
-                    </div>
-                    <!-- Terça-feira -->
-                    <div class="dia-group">
-                        <span class="dia-label">Terça:</span>
-                        <label><input type="checkbox" name="terManha"> Manhã</label>
-                        <label><input type="checkbox" name="terTarde"> Tarde</label>
-                    </div>
-                    <!-- Quarta-feira -->
-                    <div class="dia-group">
-                        <span class="dia-label">Quarta:</span>
-                        <label><input type="checkbox" name="quaManha"> Manhã</label>
-                        <label><input type="checkbox" name="quaTarde"> Tarde</label>
-                    </div>
-                    <!-- Quinta-feira -->
-                    <div class="dia-group">
-                        <span class="dia-label">Quinta:</span>
-                        <label><input type="checkbox" name="quiManha"> Manhã</label>
-                        <label><input type="checkbox" name="quiTarde"> Tarde</label>
-                    </div>
-                    <!-- Sexta-feira -->
-                    <div class="dia-group">
-                        <span class="dia-label">Sexta:</span>
-                        <label><input type="checkbox" name="sexManha"> Manhã</label>
-                        <label><input type="checkbox" name="sexTarde"> Tarde</label>
-                    </div>
-                    <!-- Sábado -->
-                    <div class="dia-group">
-                        <span class="dia-label">Sábado:</span>
-                        <label><input type="checkbox" name="sabManha"> Manhã</label>
-                        <label><input type="checkbox" name="sabTarde"> Tarde</label>
-                    </div>
+            <div class="form-section" id="section2">
+                <h2 class="section-title">Disponibilidade de Dias/Turnos</h2>
+                <p class="schedule-instruction">Marque os turnos em que poderá dar aulas nos dias abaixo:</p>
+                
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th class="day-header">Turno</th>
+                            <th class="day-header">Segunda</th>
+                            <th class="day-header">Terça</th>
+                            <th class="day-header">Quarta</th>
+                            <th class="day-header">Quinta</th>
+                            <th class="day-header">Sexta</th>
+                            <th class="day-header">Sábado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Manhã</td>
+                            <td><input type="checkbox" name="segManha" id="segManha"></td>
+                            <td><input type="checkbox" name="terManha" id="terManha"></td>
+                            <td><input type="checkbox" name="quaManha" id="quaManha"></td>
+                            <td><input type="checkbox" name="quiManha" id="quiManha"></td>
+                            <td><input type="checkbox" name="sexManha" id="sexManha"></td>
+                            <td><input type="checkbox" name="sabManha" id="sabManha"></td>
+                        </tr>
+                        <tr>
+                            <td>Tarde</td>
+                            <td><input type="checkbox" name="segTarde" id="segTarde"></td>
+                            <td><input type="checkbox" name="terTarde" id="terTarde"></td>
+                            <td><input type="checkbox" name="quaTarde" id="quaTarde"></td>
+                            <td><input type="checkbox" name="quiTarde" id="quiTarde"></td>
+                            <td><input type="checkbox" name="sexTarde" id="sexTarde"></td>
+                            <td><input type="checkbox" name="sabTarde" id="sabTarde"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="nav-buttons">
+                    <button type="button" class="btn btn-prev" onclick="showSection(1)">Voltar</button>
+                    <button type="button" class="btn btn-next" onclick="showSection(3)">Avançar</button>
                 </div>
-            </fieldset>
+            </div>
 
             <!-- Seção 3: Outras Informações -->
-            <fieldset>
-                <legend>Outras Informações</legend>
+            <div class="form-section" id="section3">
+                <h2 class="section-title">Outras Informações</h2>
+                
                 <div class="input-group">
                     <label for="disciplinas">Disciplinas de Interesse:</label>
-                    <input type="text" id="disciplinas" name="disciplinas" placeholder="Ex: Matemática, Física, Português">
-                </div>
-                <div class="input-group">
-                    <label for="veiculo">Possui Veículo?</label>
-                    <select id="veiculo" name="veiculo" required>
-                        <option value="">Selecione...</option>
-                        <option value="Sim">Sim</option>
-                        <option value="Não">Não</option>
+                    <select id="disciplinas" name="disciplinas" class="select-multiple" multiple size="6">
+                        <option value="Artes">Artes</option>
+                        <option value="Biologia">Biologia</option>
+                        <option value="Ciências">Ciências</option>
+                        <option value="Educação Física">Educação Física</option>
+                        <option value="Física">Física</option>
+                        <option value="Geografia">Geografia</option>
+                        <option value="História">História</option>
+                        <option value="Inglês">Inglês</option>
+                        <option value="Literatura">Literatura</option>
+                        <option value="Matemática">Matemática</option>
+                        <option value="Pedagogia">Pedagogia</option>
+                        <option value="Português">Português</option>
+                        <option value="Química">Química</option>
+                        <option value="Sociologia">Sociologia</option>
                     </select>
                 </div>
+                
+                <div class="input-group">
+                    <label for="veiculo">Possui Veículo?</label>
+                    <div class="vehicle-toggle">
+                        <label class="toggle-label toggle-no">Não</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="veiculo" name="veiculo">
+                            <span class="slider"></span>
+                        </label>
+                        <label class="toggle-label toggle-yes">Sim</label>
+                    </div>
+                </div>
+                
                 <div class="input-group">
                     <label for="expAulas">Experiência com Aulas:</label>
-                    <textarea id="expAulas" name="expAulas" rows="3"></textarea>
+                    <textarea id="expAulas" name="expAulas" class="input-field textarea-field"></textarea>
                 </div>
+                
                 <div class="input-group">
                     <label for="expNeuro">Experiência com Neurociência:</label>
-                    <textarea id="expNeuro" name="expNeuro" rows="3"></textarea>
+                    <textarea id="expNeuro" name="expNeuro" class="input-field textarea-field"></textarea>
                 </div>
+                
                 <div class="input-group">
                     <label for="descricao">Descrição Adicional:</label>
-                    <textarea id="descricao" name="descricao" rows="4"></textarea>
+                    <textarea id="descricao" name="descricao" class="input-field textarea-field"></textarea>
                 </div>
-            </fieldset>
-
-            <button type="submit">Enviar Cadastro</button>
+                
+                <div class="nav-buttons">
+                    <button type="button" class="btn btn-prev" onclick="showSection(2)">Voltar</button>
+                    <button type="submit" class="btn btn-submit">Enviar Cadastro</button>
+                </div>
+            </div>
         </form>
-        <div id="mensagemResultado"></div>
+
+        <!-- Seção 4: Sucesso -->
+        <div class="form-section" id="section4">
+            <div class="success-section">
+                <h2 class="success-title">Inscrição Enviada! ✅</h2>
+                <p class="success-message">
+                    Obrigado por se inscrever como professor na <strong>Master Educação</strong>! 
+                    Em breve, nossa equipe entrará em contato com você para os próximos passos.
+                </p>
+                <div class="contact-info">
+                    Mais dúvidas? Entre em contato com: <strong>(82) 9.8886-2575</strong> 📱
+                </div>
+            </div>
+        </div>
     </div>
+
+    <script>
+        function showSection(sectionNumber) {
+            // Hide all sections
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(`section${sectionNumber}`).classList.add('active');
+            
+            // Update progress bar
+            document.querySelectorAll('.progress-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            document.querySelector(`.progress-step[data-step="${sectionNumber}"]`).classList.add('active');
+        }
+
+        document.getElementById('meuFormulario').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get selected disciplines
+            const disciplinasSelect = document.getElementById('disciplinas');
+            const selectedDisciplines = Array.from(disciplinasSelect.selectedOptions)
+                .map(option => option.value)
+                .join(', ');
+            
+            // Get vehicle status
+            const hasVehicle = document.getElementById('veiculo').checked ? 'Sim' : 'Não';
+            
+            // Create form data object
+            const formData = {
+                nome: document.getElementById('nome').value,
+                cpf: document.getElementById('cpf').value,
+                email: document.getElementById('email').value,
+                disciplinas: selectedDisciplines,
+                veiculo: hasVehicle,
+                expAulas: document.getElementById('expAulas').value,
+                expNeuro: document.getElementById('expNeuro').value,
+                descricao: document.getElementById('descricao').value
+            };
+            
+            // Log form data (in real implementation, send to server)
+            console.log('Form Data:', formData);
+            
+            // Show success section
+            showSection(4);
+        });
+
+        // Add modern checkbox styling to schedule table
+        document.querySelectorAll('.schedule-table input[type="checkbox"]').forEach(checkbox => {
+            const td = checkbox.parentElement;
+            const customCheckbox = document.createElement('div');
+            customCheckbox.className = 'checkbox-custom';
+            const container = document.createElement('label');
+            container.className = 'checkbox-container';
+            container.style.justifyContent = 'center';
+            container.style.margin = '0';
+            
+            checkbox.style.display = 'none';
+            container.appendChild(checkbox);
+            container.appendChild(customCheckbox);
+            td.innerHTML = '';
+            td.appendChild(container);
+        });
+    </script>
+
 
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
