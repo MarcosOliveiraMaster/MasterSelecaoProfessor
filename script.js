@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         } catch (error) {
             console.error('Erro ao enviar dados:', error);
-            alert("Ops! Houve um erro ao enviar seu cadastro. Tente novamente.");
+            // alert("Ops! Houve um erro ao enviar seu cadastro. Tente novamente.");
             
             botaoSubmit.disabled = false;
             botaoSubmit.textContent = 'Enviar Cadastro';
