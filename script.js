@@ -5,11 +5,11 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('meuFormulario');
+    
     const dropdownBtn = document.getElementById("dropdownBtn");
     const dropdownContent = document.getElementById("dropdownContent");
     const checkboxes = dropdownContent.querySelectorAll('input[name="disciplinas"]');
 
-    // Configuração do dropdown de disciplinas
     dropdownBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         dropdownContent.style.display = dropdownContent.style.display === "block" ? "none" : "block";
@@ -30,16 +30,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Função para obter valor do checkbox com validação
-    const getCheckboxValue = (id) => {
-        const checkbox = document.getElementById(id);
-        if (!checkbox) {
-            console.warn(`Checkbox com ID "${id}" não encontrado no DOM.`);
-            return false;
-        }
-        return checkbox.checked;
-    };
-
     form.addEventListener('submit', async function(event) {
         event.preventDefault();
 
@@ -47,16 +37,20 @@ document.addEventListener('DOMContentLoaded', function() {
         botaoSubmit.disabled = true;
         botaoSubmit.textContent = 'Enviando...';
 
-        // Coleta de dados do formulário
+        const getCheckboxValue = (id) => {
+            const checkbox = document.getElementById(id);
+            return checkbox ? checkbox.checked : false;
+        };
+
         const disciplinasSelecionadas = Array.from(checkboxes)
             .filter(cb => cb.checked)
             .map(cb => cb.value)
             .join(', ');
 
         const dadosFormulario = {
-            nome: document.getElementById('nome')?.value || '',
-            cpf: document.getElementById('cpf')?.value || '',
-            email: document.getElementById('email')?.value || '',
+            nome: document.getElementById('nome').value,
+            cpf: document.getElementById('cpf').value,
+            email: document.getElementById('email').value,
             disciplinas: disciplinasSelecionadas,
             segManha: getCheckboxValue('segManha'),
             segTarde: getCheckboxValue('segTarde'),
@@ -70,34 +64,11 @@ document.addEventListener('DOMContentLoaded', function() {
             sexTarde: getCheckboxValue('sexTarde'),
             sabManha: getCheckboxValue('sabManha'),
             sabTarde: getCheckboxValue('sabTarde'),
-            veiculo: document.getElementById('veiculo')?.checked ? 'Sim' : 'Não',
-            expAulas: document.getElementById('expAulas')?.value || '',
-            expNeuro: document.getElementById('expNeuro')?.value || '',
-            descricao: document.getElementById('descricao')?.value || '',
+            veiculo: document.getElementById('veiculo').checked ? 'Sim' : 'Não',
+            expAulas: document.getElementById('expAulas').value,
+            expNeuro: document.getElementById('expNeuro').value,
+            descricao: document.getElementById('descricao').value,
         };
-
-        // Validação: pelo menos um turno deve ser selecionado
-        const algumTurnoSelecionado = dadosFormulario.segManha || dadosFormulario.segTarde ||
-                                      dadosFormulario.terManha || dadosFormulario.terTarde ||
-                                      dadosFormulario.quaManha || dadosFormulario.quaTarde ||
-                                      dadosFormulario.quiManha || dadosFormulario.quiTarde ||
-                                      dadosFormulario.sexManha || dadosFormulario.sexTarde ||
-                                      dadosFormulario.sabManha || dadosFormulario.sabTarde;
-
-        if (!algumTurnoSelecionado) {
-            alert('Por favor, selecione pelo menos um turno de disponibilidade.');
-            botaoSubmit.disabled = false;
-            botaoSubmit.textContent = 'Enviar Cadastro';
-            return;
-        }
-
-        // Validação: campos obrigatórios
-        if (!dadosFormulario.nome || !dadosFormulario.cpf || !dadosFormulario.email) {
-            alert('Por favor, preencha todos os campos obrigatórios (Nome, CPF, E-mail).');
-            botaoSubmit.disabled = false;
-            botaoSubmit.textContent = 'Enviar Cadastro';
-            return;
-        }
 
         try {
             const { data, error } = await supabaseClient
@@ -105,16 +76,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 .insert([dadosFormulario]);
 
             if (error) {
-                throw new Error(error.message || 'Erro desconhecido ao enviar os dados');
+                throw error;
             }
 
-            showSection(5); // Exibe seção de sucesso
+            showSection(5);
 
         } catch (error) {
-            console.error('Erro ao enviar dados:', error.message);
-            alert(`Ops! Houve um erro ao enviar seu cadastro: ${error.message}. Tente novamente.`);
-            botaoSubmit.disabled = false;
-            botaoSubmit.textContent = 'Enviar Cadastro';
+            // console.error('Erro ao enviar dados:', error);
+            // alert("Ops! Houve um erro ao enviar seu cadastro. Tente novamente.");
+            
+            // botaoSubmit.disabled = false;
+            // botaoSubmit.textContent = 'Enviar Cadastro';
         }
     });
 });
