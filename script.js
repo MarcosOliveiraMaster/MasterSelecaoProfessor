@@ -39,7 +39,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const getCheckboxValue = (id) => {
             const checkbox = document.getElementById(id);
-            return checkbox ? checkbox.checked : false;
+            if (!checkbox) {
+                console.warn(`Checkbox com ID ${id} não encontrado.`);
+                return false;
+            }
+            return checkbox.checked;
         };
 
         const disciplinasSelecionadas = Array.from(checkboxes)
@@ -70,6 +74,21 @@ document.addEventListener('DOMContentLoaded', function() {
             descricao: document.getElementById('descricao').value,
         };
 
+        // Validação simples para garantir que pelo menos um turno seja selecionado
+        const algumTurnoSelecionado = dadosFormulario.segManha || dadosFormulario.segTarde ||
+                                      dadosFormulario.terManha || dadosFormulario.terTarde ||
+                                      dadosFormulario.quaManha || dadosFormulario.quaTarde ||
+                                      dadosFormulario.quiManha || dadosFormulario.quiTarde ||
+                                      dadosFormulario.sexManha || dadosFormulario.sexTarde ||
+                                      dadosFormulario.sabManha || dadosFormulario.sabTarde;
+
+        if (!algumTurnoSelecionado) {
+            alert('Por favor, selecione pelo menos um turno de disponibilidade.');
+            botaoSubmit.disabled = false;
+            botaoSubmit.textContent = 'Enviar Cadastro';
+            return;
+        }
+
         try {
             const { data, error } = await supabaseClient
                 .from('candidatoSelecao')
@@ -82,11 +101,11 @@ document.addEventListener('DOMContentLoaded', function() {
             showSection(5);
 
         } catch (error) {
-            // console.error('Erro ao enviar dados:', error);
-            // alert("Ops! Houve um erro ao enviar seu cadastro. Tente novamente.");
+            console.error('Erro ao enviar dados:', error.message);
+            alert(`Ops! Houve um erro ao enviar seu cadastro: ${error.message}. Tente novamente.`);
             
-            // botaoSubmit.disabled = false;
-            // botaoSubmit.textContent = 'Enviar Cadastro';
+            botaoSubmit.disabled = false;
+            botaoSubmit.textContent = 'Enviar Cadastro';
         }
     });
 });
