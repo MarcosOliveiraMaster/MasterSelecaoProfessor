@@ -230,6 +230,7 @@ body {
     font-weight: 600;
     color: var(--titulo1);
     background: white !important;
+    text-align: left;
 }
 
 .vehicle-toggle {
@@ -482,58 +483,21 @@ input:checked + .slider:before {
     
     .schedule-table {
         font-size: 12px;
-        display: block;
     }
 
-    .schedule-table thead {
-        display: none; /* Hide original headers */
+    .schedule-table th {
+        padding: 8px;
+        font-size: 12px;
     }
 
-    .schedule-table tbody {
-        display: block;
-    }
-
-    .schedule-table tr {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 15px;
-        background: var(--bg-light);
-        border-radius: 8px;
-        border: 1px solid var(--border-light);
-    }
-
-    .schedule-table td, .schedule-table th {
-        display: block;
-        text-align: left;
-        padding: 10px;
-        border: none;
-        border-bottom: 1px solid var(--border-light);
+    .schedule-table td {
+        padding: 8px;
+        font-size: 12px;
     }
 
     .schedule-table .day-header {
-        font-weight: 600;
-        color: var(--titulo1);
-        background: white;
-        text-align: center;
-        font-size: 14px;
-    }
-
-    .schedule-table td:not(.day-header) {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .schedule-table td:not(.day-header)::before {
-        content: attr(data-label);
-        font-weight: 600;
-        color: var(--texto1);
-        flex: 1;
-        margin-right: 10px;
-    }
-
-    .schedule-table td:last-child {
-        border-bottom: none;
+        text-align: left;
+        font-size: 12px;
     }
 }
 
