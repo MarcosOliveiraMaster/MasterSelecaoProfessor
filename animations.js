@@ -1,9 +1,3 @@
-// alert("✅ Conexão estabelecida entre a página e o script.js!");
-
-// Animação para seleção de bairros:
-
-
-// Função para alternar entre seções
 function showSection(sectionNumber) {
     document.querySelectorAll('.form-section').forEach(section => {
         section.classList.remove('active');
@@ -34,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
         e.target.value = value;
     });
 
-    // Validação da Seção 2 (inclui endereço)
+    // Validação da Seção 2
     function validateSection2() {
         const nomeValid = nomeField.value.trim() !== '';
         const cpfValid = cpfField.value.replace(/\D/g, '').length === 11;
@@ -74,25 +68,42 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-
+    // Gerenciamento de bairros selecionados
+    let bairros = "";
+    const bairroCheckboxes = document.querySelectorAll('input[name="bairros-alta"], input[name="bairros-baixa"]');
+    bairroCheckboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+            const selecionados = Array.from(bairroCheckboxes)
+                .filter(i => i.checked)
+                .map(i => i.nextElementSibling.querySelector('.desc').textContent);
+            bairros = selecionados.join(", ");
+            // console.log("Valor da variável bairros:", bairros);
+        });
+    });
 
     // Switches de experiência
     const expAulasSwitch = document.getElementById('expAulasSwitch');
     const expAulasContainer = document.getElementById('expAulasContainer');
     const expTranstornosSwitch = document.getElementById('expTranstornosSwitch');
     const expNeuroContainer = document.getElementById('expNeuroContainer');
+    let expAulasValue = "Não";
+    let expTranstornosValue = "Não";
 
     expAulasSwitch.addEventListener('change', () => {
+        expAulasValue = expAulasSwitch.checked ? "Sim" : "Não";
         expAulasContainer.classList.toggle('hidden', !expAulasSwitch.checked);
+        // console.log("Experiência com aulas particulares:", expAulasValue);
     });
 
     expTranstornosSwitch.addEventListener('change', () => {
+        expTranstornosValue = expTranstornosSwitch.checked ? "Sim" : "Não";
         expNeuroContainer.classList.toggle('hidden', !expTranstornosSwitch.checked);
+        // console.log("Experiência com transtornos de aprendizagem:", expTranstornosValue);
     });
 
-    // Ação de envio do formulário (apenas simulação)
+    // Ação de envio do formulário
     form.addEventListener('submit', function (event) {
         event.preventDefault();
-        showSection(5); // Mostra tela de sucesso
+        showSection(5);
     });
 });
