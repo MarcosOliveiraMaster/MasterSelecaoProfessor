@@ -83,109 +83,41 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="day-header">Segunda</td>
-                            <td><input type="checkbox" class="schedule-checkbox"></td>
-                            <td><input type="checkbox" class="schedule-checkbox"></td>
-                        </tr>
-                        <tr>
-                            <td class="day-header">Terça</td>
-                            <td><input type="checkbox" class="schedule-checkbox"></td>
-                            <td><input type="checkbox" class="schedule-checkbox"></td>
-                        </tr>
-                        <tr>
-                            <td class="day-header">Quarta</td>
-                            <td><input type="checkbox" class="schedule-checkbox"></td>
-                            <td><input type="checkbox" class="schedule-checkbox"></td>
-                        </tr>
-                        <tr>
-                            <td class="day-header">Quinta</td>
-                            <td><input type="checkbox" class="schedule-checkbox"></td>
-                            <td><input type="checkbox" class="schedule-checkbox"></td>
-                        </tr>
-                        <tr>
-                            <td class="day-header">Sexta</td>
-                            <td><input type="checkbox" class="schedule-checkbox"></td>
-                            <td><input type="checkbox" class="schedule-checkbox"></td>
-                        </tr>
-                        <tr>
-                            <td class="day-header">Sábado</td>
-                            <td><input type="checkbox" class="schedule-checkbox"></td>
-                            <td><input type="checkbox" class="schedule-checkbox"></td>
-                        </tr>
+                        <tr><td class="day-header">Segunda</td><td><input type="checkbox" class="schedule-checkbox"></td><td><input type="checkbox" class="schedule-checkbox"></td></tr>
+                        <tr><td class="day-header">Terça</td><td><input type="checkbox" class="schedule-checkbox"></td><td><input type="checkbox" class="schedule-checkbox"></td></tr>
+                        <tr><td class="day-header">Quarta</td><td><input type="checkbox" class="schedule-checkbox"></td><td><input type="checkbox" class="schedule-checkbox"></td></tr>
+                        <tr><td class="day-header">Quinta</td><td><input type="checkbox" class="schedule-checkbox"></td><td><input type="checkbox" class="schedule-checkbox"></td></tr>
+                        <tr><td class="day-header">Sexta</td><td><input type="checkbox" class="schedule-checkbox"></td><td><input type="checkbox" class="schedule-checkbox"></td></tr>
+                        <tr><td class="day-header">Sábado</td><td><input type="checkbox" class="schedule-checkbox"></td><td><input type="checkbox" class="schedule-checkbox"></td></tr>
                     </tbody>
                 </table>
                 <div class="input-group">
                     <label>Selecione os bairros que você pode atender</label>
                     <div class="groups">
                         <div class="group">
-                            <div class="group-header" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('.chev').classList.toggle('expanded'); this.querySelector('.chev').classList.toggle('collapsed');">
-                                <div class="group-left">
-                                    <span>Bairros da Parte Alta</span>
-                                </div>
+                            <div class="group-header" onclick="toggleGroup(this)">
+                                <div class="group-left"><span>Bairros da Parte Alta</span></div>
                                 <button type="button" class="toggle-btn">
-                                    <svg class="chev" viewBox="0 0 18 14">
-                                        <path stroke-width="2" fill="none" stroke-linecap="round" d="M1 1l8 8 8-8"/>
-                                    </svg>
+                                    <svg class="chev" viewBox="0 0 18 14"><path stroke-width="2" fill="none" stroke-linecap="round" d="M1 1l8 8 8-8"/></svg>
                                 </button>
                             </div>
                             <div class="items hidden">
-                                <div class="item-row">
-                                    <input type="checkbox" name="bairros-alta" value="Antares">
-                                    <div>
-                                        <label>Antares</label>
-                                        <div class="desc">Região residencial com fácil acesso</div>
-                                    </div>
-                                </div>
-                                <div class="item-row">
-                                    <input type="checkbox" name="bairros-alta" value="Serraria">
-                                    <div>
-                                        <label>Serraria</label>
-                                        <div class="desc">Área comercial e residencial</div>
-                                    </div>
-                                </div>
-                                <div class="item-row">
-                                    <input type="checkbox" name="bairros-alta" value="Benedito Bentes">
-                                    <div>
-                                        <label>Benedito Bentes</label>
-                                        <div class="desc">Bairro populoso com grande demanda</div>
-                                    </div>
-                                </div>
+                                <div class="item-row"><input type="checkbox" name="bairros" value="Antares"><div><label>Antares</label><div class="desc">Região residencial com fácil acesso</div></div></div>
+                                <div class="item-row"><input type="checkbox" name="bairros" value="Serraria"><div><label>Serraria</label><div class="desc">Área comercial e residencial</div></div></div>
+                                <div class="item-row"><input type="checkbox" name="bairros" value="Benedito Bentes"><div><label>Benedito Bentes</label><div class="desc">Bairro populoso com grande demanda</div></div></div>
                             </div>
                         </div>
                         <div class="group">
-                            <div class="group-header" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('.chev').classList.toggle('expanded'); this.querySelector('.chev').classList.toggle('collapsed');">
-                                <div class="group-left">
-                                    <span>Bairros da Parte Baixa</span>
-                                </div>
+                            <div class="group-header" onclick="toggleGroup(this)">
+                                <div class="group-left"><span>Bairros da Parte Baixa</span></div>
                                 <button type="button" class="toggle-btn">
-                                    <svg class="chev" viewBox="0 0 18 14">
-                                        <path stroke-width="2" fill="none" stroke-linecap="round" d="M1 1l8 8 8-8"/>
-                                    </svg>
+                                    <svg class="chev" viewBox="0 0 18 14"><path stroke-width="2" fill="none" stroke-linecap="round" d="M1 1l8 8 8-8"/></svg>
                                 </button>
                             </div>
                             <div class="items hidden">
-                                <div class="item-row">
-                                    <input type="checkbox" name="bairros-baixa" value="Ponta Verde">
-                                    <div>
-                                        <label>Ponta Verde</label>
-                                        <div class="desc">Bairro nobre com alta demanda</div>
-                                    </div>
-                                </div>
-                                <div class="item-row">
-                                    <input type="checkbox" name="bairros-baixa" value="Jatiúca">
-                                    <div>
-                                        <label>Jatiúca</label>
-                                        <div class="desc">Área turística e residencial</div>
-                                    </div>
-                                </div>
-                                <div class="item-row">
-                                    <input type="checkbox" name="bairros-baixa" value="Pajuçara">
-                                    <div>
-                                        <label>Pajuçara</label>
-                                        <div class="desc">Região central e litorânea</div>
-                                    </div>
-                                </div>
+                                <div class="item-row"><input type="checkbox" name="bairros" value="Ponta Verde"><div><label>Ponta Verde</label><div class="desc">Bairro nobre com alta demanda</div></div></div>
+                                <div class="item-row"><input type="checkbox" name="bairros" value="Jatiúca"><div><label>Jatiúca</label><div class="desc">Área turística e residencial</div></div></div>
+                                <div class="item-row"><input type="checkbox" name="bairros" value="Pajuçara"><div><label>Pajuçara</label><div class="desc">Região central e litorânea</div></div></div>
                             </div>
                         </div>
                     </div>
@@ -220,72 +152,23 @@
                 <div class="input-group">
                     <label>Selecione seu nível acadêmico:</label>
                     <div class="groups">
-                        <label class="radio-container">
-                            <input type="radio" name="nivel" class="item-radio" value="Graduando" required>
-                            <span class="radio-checkmark"></span>
-                            Graduando
-                        </label>
-                        <label class="radio-container">
-                            <input type="radio" name="nivel" class="item-radio" value="Graduado">
-                            <span class="radio-checkmark"></span>
-                            Graduado
-                        </label>
-                        <label class="radio-container">
-                            <input type="radio" name="nivel" class="item-radio" value="Mestrando">
-                            <span class="radio-checkmark"></span>
-                            Mestrando
-                        </label>
-                        <label class="radio-container">
-                            <input type="radio" name="nivel" class="item-radio" value="Mestre">
-                            <span class="radio-checkmark"></span>
-                            Mestre
-                        </label>
-                        <label class="radio-container">
-                            <input type="radio" name="nivel" class="item-radio" value="Bacharelado">
-                            <span class="radio-checkmark"></span>
-                            Bacharelado
-                        </label>
-                        <label class="radio-container">
-                            <input type="radio" name="nivel" class="item-radio" value="Técnico">
-                            <span class="radio-checkmark"></span>
-                            Técnico
-                        </label>
+                        <label class="radio-container"><input type="radio" name="nivel" class="item-radio" value="Graduando" required><span class="radio-checkmark"></span> Graduando</label>
+                        <label class="radio-container"><input type="radio" name="nivel" class="item-radio" value="Graduado"><span class="radio-checkmark"></span> Graduado</label>
+                        <label class="radio-container"><input type="radio" name="nivel" class="item-radio" value="Mestrando"><span class="radio-checkmark"></span> Mestrando</label>
+                        <label class="radio-container"><input type="radio" name="nivel" class="item-radio" value="Mestre"><span class="radio-checkmark"></span> Mestre</label>
+                        <label class="radio-container"><input type="radio" name="nivel" class="item-radio" value="Bacharelado"><span class="radio-checkmark"></span> Bacharelado</label>
+                        <label class="radio-container"><input type="radio" name="nivel" class="item-radio" value="Técnico"><span class="radio-checkmark"></span> Técnico</label>
                     </div>
                 </div>
                 <div class="input-group">
                     <label>Escreva seu curso de formação:</label>
                     <input type="text" id="curso" class="input-field" required>
                 </div>
-                <div class="input-group vehicle-toggle">
-                    <label class="toggle-label">Tem experiência com aulas particulares?</label>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="expAulasSwitch">
-                        <span class="slider"></span>
-                    </div>
-                    <span class="toggle-no">Não</span>
-                    <span class="toggle-yes">Sim</span>
-                </div>
-                <div id="expAulasContainer" class="input-group hidden">
-                    <label>Experiência com Aulas:</label>
-                    <textarea id="expAulas" class="input-field textarea-field"></textarea>
-                </div>
-                <div class="input-group vehicle-toggle">
-                    <label class="toggle-label">Possui experiência com alunos com transtornos de aprendizagem?</label>
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="expTranstornosSwitch">
-                        <span class="slider"></span>
-                    </div>
-                    <span class="toggle-no">Não</span>
-                    <span class="toggle-yes">Sim</span>
-                </div>
-                <div id="expNeuroContainer" class="input-group hidden">
-                    <label>Experiência com Neurociência:</label>
-                    <textarea id="expNeuro" class="input-field textarea-field"></textarea>
-                </div>
-                <div class="input-group">
-                    <label>Descrição Adicional:</label>
-                    <textarea id="descAdicional" class="input-field textarea-field"></textarea>
-                </div>
+
+                <!-- Inicio Área Experiência -->
+                
+
+                <!-- Fim area experiêcia -->
                 <div class="nav-buttons">
                     <button type="button" class="btn btn-prev" onclick="showSection(3)">Voltar</button>
                     <button type="submit" class="btn btn-submit">Enviar Cadastro</button>

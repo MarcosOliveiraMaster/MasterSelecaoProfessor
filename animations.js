@@ -1,3 +1,4 @@
+// Navegação entre seções
 function showSection(sectionNumber) {
     document.querySelectorAll('.form-section').forEach(section => {
         section.classList.remove('active');
@@ -10,6 +11,9 @@ function showSection(sectionNumber) {
     document.querySelector(`.progress-step:nth-child(${sectionNumber})`).classList.add('active');
 }
 
+
+
+// Inicialização quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('meuFormulario');
     const nomeField = document.getElementById('nome');
@@ -22,9 +26,9 @@ document.addEventListener('DOMContentLoaded', function () {
     cpfField.addEventListener('input', function (e) {
         let value = e.target.value.replace(/\D/g, '');
         if (value.length > 11) value = value.substring(0, 11);
-        value = value.replace(/(\d{3})(\d)/, '$1.$2');
-        value = value.replace(/(\d{3})(\d)/, '$1.$2');
-        value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        value = value.replace(/(\d{3})(\d)/, '$1.$2')
+                     .replace(/(\d{3})(\d)/, '$1.$2')
+                     .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
         e.target.value = value;
     });
 
@@ -37,10 +41,9 @@ document.addEventListener('DOMContentLoaded', function () {
         section2NextBtn.disabled = !(nomeValid && cpfValid && emailValid && enderecoValid);
     }
 
-    nomeField.addEventListener('input', validateSection2);
-    cpfField.addEventListener('input', validateSection2);
-    emailField.addEventListener('input', validateSection2);
-    enderecoField.addEventListener('input', validateSection2);
+    [nomeField, cpfField, emailField, enderecoField].forEach(field => {
+        field.addEventListener('input', validateSection2);
+    });
     validateSection2();
 
     // Dropdown de disciplinas
@@ -58,52 +61,17 @@ document.addEventListener('DOMContentLoaded', function () {
             const selecionadas = Array.from(checkboxes)
                 .filter(i => i.checked)
                 .map(i => i.value);
-            dropdownBtn.textContent = selecionadas.length > 0 ? selecionadas.join(", ") : "Selecione as disciplinas que você pode lecionar";
+            dropdownBtn.textContent = selecionadas.length > 0 
+                ? selecionadas.join(", ") 
+                : "Selecione as disciplinas que você pode lecionar";
         });
     });
 
-    document.addEventListener("click", function (event) {
+    document.addEventListener("click", (event) => {
         if (!event.target.closest(".dropdown")) {
             dropdownContent.style.display = "none";
         }
     });
 
-    // Gerenciamento de bairros selecionados
-    let bairros = "";
-    const bairroCheckboxes = document.querySelectorAll('input[name="bairros-alta"], input[name="bairros-baixa"]');
-    bairroCheckboxes.forEach(cb => {
-        cb.addEventListener('change', () => {
-            const selecionados = Array.from(bairroCheckboxes)
-                .filter(i => i.checked)
-                .map(i => i.nextElementSibling.querySelector('.desc').textContent);
-            bairros = selecionados.join(", ");
-            // console.log("Valor da variável bairros:", bairros);
-        });
-    });
-
-    // Switches de experiência
-    const expAulasSwitch = document.getElementById('expAulasSwitch');
-    const expAulasContainer = document.getElementById('expAulasContainer');
-    const expTranstornosSwitch = document.getElementById('expTranstornosSwitch');
-    const expNeuroContainer = document.getElementById('expNeuroContainer');
-    let expAulasValue = "Não";
-    let expTranstornosValue = "Não";
-
-    expAulasSwitch.addEventListener('change', () => {
-        expAulasValue = expAulasSwitch.checked ? "Sim" : "Não";
-        expAulasContainer.classList.toggle('hidden', !expAulasSwitch.checked);
-        // console.log("Experiência com aulas particulares:", expAulasValue);
-    });
-
-    expTranstornosSwitch.addEventListener('change', () => {
-        expTranstornosValue = expTranstornosSwitch.checked ? "Sim" : "Não";
-        expNeuroContainer.classList.toggle('hidden', !expTranstornosSwitch.checked);
-        // console.log("Experiência com transtornos de aprendizagem:", expTranstornosValue);
-    });
-
-    // Ação de envio do formulário
-    form.addEventListener('submit', function (event) {
-        event.preventDefault();
-        showSection(5);
-    });
+    
 });
