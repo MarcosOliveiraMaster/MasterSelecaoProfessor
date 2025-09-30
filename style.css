@@ -8,6 +8,7 @@
     --shadow: 0 4px 20px rgba(239, 69, 2, 0.15);
     --success: #28a745;
     --error: #dc3545;
+    --muted: #666;  /* Lista de Bairros */
 }
 
 * {
@@ -105,6 +106,199 @@ body {
     animation: fadeIn 0.5s ease-in-out;
 }
 
+/* Estilos para a lista de grupos (bairros e nível acadêmico) */
+.groups {
+    display: grid;
+    gap: 12px;
+}
+
+.group {
+    background: var(--card, #fff);
+    border: 2px solid var(--border-light);
+    border-radius: 10px;
+    padding: 12px; 
+    display: flex;
+    flex-direction: column;
+}
+
+.group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 4px;
+    cursor: pointer;
+}
+
+.group-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toggle-btn {
+    background: transparent;
+    border: 0;
+    padding: 6px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    color: var(--accent, #ef4502);
+}
+
+.chev {
+    width: 18px;
+    height: 14px;
+    transition: transform .18s ease;
+}
+
+.chev path {
+    stroke: var(--accent, #ef4502);
+}
+
+.collapsed .chev {
+    transform: rotate(0deg);
+}
+
+.expanded .chev {
+    transform: rotate(180deg);
+}
+
+.items {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border, #e6e6e6);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.item-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.item-row label {
+    font-weight: 500;
+    color: var(--item-color, #ff7b33);
+}
+
+.desc {
+    font-size: 13px;
+    color: var(--desc, #333333);
+    margin-top: 4px;
+    font-family: 'Lexend', 'Comfortaa', sans-serif;
+}
+
+/* Checkboxes com a cor laranja */
+input[type="checkbox"] {
+    accent-color: var(--accent, #ef4502);
+    width: 18px;
+    height: 18px;
+}
+
+/* Classe para esconder elementos */
+.hidden {
+    display: none;
+}
+
+/* Estilo personalizado para radio buttons */
+.item-radio {
+    display: none;
+}
+
+.radio-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--item-color);
+    user-select: none;
+}
+
+.radio-checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 22px;
+    width: 22px;
+    background-color: white;
+    border: 2px solid var(--titulo2);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.radio-container:hover .radio-checkmark {
+    border-color: var(--titulo1);
+    transform: scale(1.1);
+}
+
+.radio-container input:checked ~ .radio-checkmark {
+    background-color: var(--titulo1);
+    border-color: var(--titulo1);
+    animation: radioPop 0.4s ease;
+}
+
+.radio-checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
+}
+
+.radio-container input:checked ~ .radio-checkmark:after {
+    display: block;
+    animation: radioDot 0.3s ease;
+}
+
+/* Listas de Bairros */
+.variable-box {
+    background: #0f1724;
+    color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    font-family: monospace;
+    margin-top: 12px;
+}
+
+@keyframes radioPop {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(239, 69, 2, 0.4);
+    }
+    50% {
+        transform: scale(1.15);
+        box-shadow: 0 0 0 8px rgba(239, 69, 2, 0.1);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(239, 69, 2, 0);
+    }
+}
+
+@keyframes radioDot {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+    }
+    70% {
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -149,49 +343,6 @@ body {
     box-shadow: 0 0 0 3px rgba(255, 123, 51, 0.2);
 }
 
-.checkbox-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 12px;
-    cursor: pointer;
-    user-select: none;
-}
-
-.checkbox-container input {
-    display: none;
-}
-
-.checkbox-custom {
-    width: 20px;
-    height: 20px;
-    border: 2px solid var(--border-light);
-    border-radius: 6px;
-    margin-right: 12px;
-    position: relative;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.checkbox-container input:checked + .checkbox-custom {
-    background: var(--titulo1);
-    border-color: var(--titulo1);
-}
-
-.checkbox-custom::after {
-    content: '✓';
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-}
-
-.checkbox-container input:checked + .checkbox-custom::after {
-    opacity: 1;
-}
-
 .schedule-instruction {
     margin-bottom: 20px;
     color: var(--texto2);
@@ -220,6 +371,7 @@ body {
     padding: 12px;
     text-align: center;
     border: 1px solid var(--border-light);
+    vertical-align: middle;
 }
 
 .schedule-table tr:nth-child(even) {
@@ -230,6 +382,49 @@ body {
     font-weight: 600;
     color: var(--titulo1);
     background: white !important;
+}
+
+/* Estilização personalizada para checkboxes da tabela */
+.schedule-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--titulo2);
+    border-radius: 4px;
+    background-color: white;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.schedule-checkbox:hover {
+    border-color: var(--titulo1);
+    transform: scale(1.1);
+}
+
+.schedule-checkbox:checked {
+    background-color: var(--titulo1);
+    border-color: var(--titulo1);
+    animation: checkboxPop 0.3s ease;
+}
+
+.schedule-checkbox:checked::before {
+    content: "✓";
+    position: absolute;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Animação quando o checkbox é marcado */
+@keyframes checkboxPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
 }
 
 .vehicle-toggle {
@@ -398,23 +593,6 @@ input:checked + .slider:before {
     font-size: 16px;
 }
 
-.select-multiple {
-    width: 100%;
-    padding: 14px;
-    border: 2px solid var(--border-light);
-    border-radius: 12px;
-    font-family: 'Comfortaa', sans-serif;
-    font-size: 16px;
-    background: white;
-    cursor: pointer;
-}
-
-.select-multiple:focus {
-    outline: none;
-    border-color: var(--titulo2);
-    box-shadow: 0 0 0 3px rgba(255, 123, 51, 0.2);
-}
-
 .dropdown {
     position: relative;
     width: 100%;
@@ -472,33 +650,15 @@ input:checked + .slider:before {
 }
 
 @media (max-width: 768px) {
-    .header h1 {
-        font-size: 20px;
-    }
-    
-    .section-title {
-        font-size: 20px;
-    }
-    
-    .schedule-table {
-        font-size: 12px;
-    }
+    .header h1 { font-size: 20px; }
+    .section-title { font-size: 20px; }
+    .schedule-table { font-size: 12px; }
 }
 
 @media (max-width: 480px) {
-    .progress-step {
-        flex: none;
-        width: 25%;
-        font-size: 10px;
-    }
-    
-    .step-number {
-        width: 28px;
-        height: 28px;
-        font-size: 12px;
-    }
-    
-    .step-label {
-        font-size: 10px;
-    }
+    .progress-step { flex: none; width: 25%; font-size: 10px; }
+    .step-number { width: 28px; height: 28px; font-size: 12px; }
+    .step-label { font-size: 10px; }
+    .schedule-checkbox { width: 20px; height: 20px; }
+    .schedule-checkbox:checked::before { font-size: 14px; }
 }
