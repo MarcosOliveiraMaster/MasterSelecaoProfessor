@@ -654,6 +654,19 @@ input:checked + .slider:before {
     margin-right: 8px;
 }
 
+/* Área de experiência */
+.experience-group {
+    margin-bottom: 25px;
+}
+
+.experience-group .toggle-switch {
+    margin-top: 8px;
+}
+
+.experience-group textarea {
+    margin-top: 12px;
+}
+
 @media (max-width: 768px) {
     .header h1 { font-size: 20px; }
     .section-title { font-size: 20px; }
