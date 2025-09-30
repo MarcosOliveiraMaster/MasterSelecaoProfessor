@@ -168,10 +168,23 @@
                 <!-- Inicio Área Experiência -->
                 <div class="input-group experience-group">
                     <label>Você tem experiência com aulas particulares?</label>
-                    <label class="toggle-switch">
+
+                    <div class="toogle">
+                        <label>Não</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="expAulasToggle">
+                                <span class="slider"></span>
+                            </label>
+                        <label>Sim</label>
+                    </div>
+
+                    <!-- Toogle Original -->
+                    <!-- <label class="toggle-switch">
                         <input type="checkbox" id="expAulasToggle">
                         <span class="slider"></span>
-                    </label>
+                    </label> -->
+                    
+
                     <div id="expAulasBox" class="hidden">
                         <textarea id="expAulasText" class="input-field textarea-field" placeholder="Escreva um pouco das suas experiências com aulas particulares"></textarea>
                     </div>
@@ -179,21 +192,51 @@
 
                 <div class="input-group experience-group">
                     <label>Você tem experiência com alunos neuro divergentes?</label>
-                    <label class="toggle-switch">
+
+                    <!-- Toogle Original -->
+                    <!-- <label class="toggle-switch">
                         <input type="checkbox" id="expNeuroToggle">
                         <span class="slider"></span>
-                    </label>
+                    </label> -->
+
+                    <!-- Novo Toogle -->
+                    <div class="toogle">
+                        <label>Não</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="expNeuroToggle">
+                                <span class="slider"></span>
+                                
+                            </label>
+                        <label>Sim</label>
+                    </div>
+
                     <div id="expNeuroBox" class="hidden">
                         <textarea id="expNeuroText" class="input-field textarea-field" placeholder="Escreva um pouco das suas experiências com alunos neuro divergentes"></textarea>
                     </div>
+
+                    
+
                 </div>
 
                 <div class="input-group experience-group">
                     <label>Você tem experiência com TDICs?</label>
-                    <label class="toggle-switch">
+                    <!-- Antigo Toogle -->
+                    <!-- <label class="toggle-switch">
                         <input type="checkbox" id="expTdicsToggle">
                         <span class="slider"></span>
-                    </label>
+                    </label> -->
+
+                    <div class="toogle">
+                        <label>Não</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="expTdicsToggle">
+                                <span class="slider"></span>
+                                
+                            </label>
+                        <label>Sim</label>
+                    </div>
+
+
                     <div id="expTdicsBox" class="hidden">
                         <textarea id="expTdicsText" class="input-field textarea-field" placeholder="Escreva um pouco das suas experiências com Tdics"></textarea>
                     </div>
