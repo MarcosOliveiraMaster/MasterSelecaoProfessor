@@ -132,7 +132,7 @@ class FormularioApp {
         this.validateSection2();
     }
 
-    // ========== FIELD VALIDATIONS ==========
+    // ========== Validação de CPF da inscrição ==========
     setupMaskCPF() {
         const cpfField = document.getElementById('cpf');
         if (!cpfField) return;
@@ -454,11 +454,40 @@ class FormularioApp {
             console.log('  Bairros selecionados:', this.formData.bairros);
             console.log('================================');
 
-            // PREPARA DADOS PARA ENVIO - APENAS NOME
+            // PREPARA DADOS PARA ENVIO - Backbp inicial
+            // const finalData = {
+            //     nome: this.formData.nome || 'Não informado'
+            // };
+
+            // (nome + cpf):
             const finalData = {
-                nome: this.formData.nome || 'Não informado'
+
+                // ======== Formato dos dados enviados ========
+                // nomeDaColuna: this.formData.nomeDaVariavel || 'valor padrão' ou
+
+                nome: this.formData.nome || 'Não informado',
+                cpf: this.formData.cpf || '', // Correção: adicionei as aspas vazias
+                email: this.formData.email || '',
+                endereco: this.formData.endereco || '',
+                bairros: this.formData.bairros.join(', ') || '',
+
+                // Resutlado checkboxes dias de disponibilidade
+                // segManha: this.formData.disponibilidade.segManha || false,
+                // segTarde: this.formData.disponibilidade.segTarde || false,
+                // terManha: this.formData.disponibilidade.terManha || false,
+                // terTarde: this.formData.disponibilidade.terTarde || false,
+                // quaManha: this.formData.disponibilidade.quaManha || false,
+                // quaTarde: this.formData.disponibilidade.quaTarde || false,
+                // quiManha: this.formData.disponibilidade.quiManha || false,
+                // quiTarde: this.formData.disponibilidade.quiTarde || false,
+                // sexManha: this.formData.disponibilidade.sexManha || false,
+                // sexTarde: this.formData.disponibilidade.sexTarde || false,
+                // sabManha: this.formData.disponibilidade.sabManha || false,
+                // sabTarde: this.formData.disponibilidade.sabTarde || false,
+
             };
 
+            // confirmação de Envio no console
             console.log('📤 ENVIANDO PARA SUPABASE (apenas nome):', finalData);
 
             // Envia apenas o nome para o Supabase
