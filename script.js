@@ -1,249 +1,546 @@
-// script.js -- substitua o arquivo existente por este
-// Funções globais (usadas por atributos onclick no HTML)
-function showSection(sectionNumber) {
-    document.querySelectorAll('.form-section').forEach(section => section.classList.remove('active'));
-    const el = document.getElementById(`section${sectionNumber}`);
-    if (el) el.classList.add('active');
+// config.js - Configurações do Supabase
+const SUPABASE_CONFIG = {
+    URL: 'https://jfdcddxcfkrhgiozfxmw.supabase.co',
+    ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpmZGNkZHhjZmtyaGdpb3pmeG13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4OTgxODgsImV4cCI6MjA3NDQ3NDE4OH0.BFnQDb6GdvbXvgQq3mB0Bt2u2551-QR4QT1RT6ZXfAE'
+};
 
-    document.querySelectorAll('.progress-step').forEach(step => step.classList.remove('active'));
-    const progressStep = document.querySelector(`.progress-step:nth-child(${sectionNumber})`);
-    if (progressStep) progressStep.classList.add('active');
+// app.js - Aplicação principal
+class FormularioApp {
+    constructor() {
+        this.supabase = null;
+        this.currentSection = 1;
+        this.formData = {
+            nome: '',
+            cpf: '',
+            email: '',
+            endereco: '',
+            disciplinas: [],
+            nivel: '',
+            curso: '',
+            expAulas: 'não',
+            descricaoExpAulas: '',
+            expNeuro: 'não',
+            descricaoExpNeuro: '',
+            expTdics: 'não',
+            descricaoTdics: '',
+            disponibilidade: {
+                segManha: false, segTarde: false,
+                terManha: false, terTarde: false,
+                quaManha: false, quaTarde: false,
+                quiManha: false, quiTarde: false,
+                sexManha: false, sexTarde: false,
+                sabManha: false, sabTarde: false
+            },
+            bairros: []
+        };
+        
+        this.init();
+    }
+
+    async init() {
+        await this.initializeSupabase();
+        this.setupEventListeners();
+        this.initializeUI();
+        console.log('✅ Aplicação inicializada');
+    }
+
+    // ========== SUPABASE ==========
+    async initializeSupabase() {
+        try {
+            if (typeof supabase !== 'undefined' && supabase.createClient) {
+                this.supabase = supabase.createClient(SUPABASE_CONFIG.URL, SUPABASE_CONFIG.ANON_KEY);
+                console.log('✅ Supabase inicializado');
+            } else {
+                console.warn('Supabase não encontrado, carregando dinamicamente...');
+                await this.loadSupabaseScript();
+            }
+        } catch (error) {
+            console.error('❌ Erro ao inicializar Supabase:', error);
+        }
+    }
+
+    loadSupabaseScript() {
+        return new Promise((resolve, reject) => {
+            if (window.supabase) {
+                this.supabase = supabase.createClient(SUPABASE_CONFIG.URL, SUPABASE_CONFIG.ANON_KEY);
+                resolve();
+                return;
+            }
+            
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+            script.onload = () => {
+                this.supabase = supabase.createClient(SUPABASE_CONFIG.URL, SUPABASE_CONFIG.ANON_KEY);
+                resolve();
+            };
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
+    }
+
+    async testSupabaseConnection() {
+        if (!this.supabase) {
+            console.error('Supabase não inicializado');
+            return false;
+        }
+        
+        try {
+            const { data, error } = await this.supabase
+                .from('candidatoSelecao')
+                .select('count')
+                .limit(1);
+                
+            if (error) throw error;
+            console.log('✅ Conexão com Supabase: OK');
+            return true;
+        } catch (error) {
+            console.error('❌ Erro na conexão com Supabase:', error);
+            return false;
+        }
+    }
+
+    // ========== UI FUNCTIONS ==========
+    showSection(sectionNumber) {
+        document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.progress-step').forEach(step => step.classList.remove('active'));
+        
+        const sectionEl = document.getElementById(`section${sectionNumber}`);
+        if (sectionEl) sectionEl.classList.add('active');
+        
+        const progressStep = document.querySelector(`.progress-step:nth-child(${sectionNumber})`);
+        if (progressStep) progressStep.classList.add('active');
+        
+        this.currentSection = sectionNumber;
+        console.log(`📄 Navegou para seção ${sectionNumber}`);
+    }
+
+    toggleGroup(headerElement) {
+        const groupEl = headerElement.closest('.group');
+        if (!groupEl) return;
+        
+        const items = groupEl.querySelector('.items');
+        if (!items) return;
+        
+        const isHidden = items.classList.contains('hidden');
+        items.classList.toggle('hidden', !isHidden);
+        groupEl.classList.toggle('expanded', isHidden);
+        groupEl.classList.toggle('collapsed', !isHidden);
+    }
+
+    initializeUI() {
+        document.querySelectorAll('.group').forEach(g => g.classList.add('collapsed'));
+        this.validateSection2();
+    }
+
+    // ========== FIELD VALIDATIONS ==========
+    setupMaskCPF() {
+        const cpfField = document.getElementById('cpf');
+        if (!cpfField) return;
+
+        cpfField.addEventListener('input', e => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            
+            e.target.value = value;
+            this.validateSection2();
+        });
+    }
+
+    validateSection2() {
+        const section2NextBtn = document.getElementById('section2-next');
+        if (!section2NextBtn) return;
+
+        const nomeField = document.getElementById('nome');
+        const cpfField = document.getElementById('cpf');
+        const emailField = document.getElementById('email');
+        const enderecoField = document.getElementById('endereco');
+
+        const nomeValid = nomeField && nomeField.value.trim() !== '';
+        const cpfValid = cpfField && cpfField.value.replace(/\D/g, '').length === 11;
+        const emailValid = emailField && emailField.value.trim() !== '' && emailField.checkValidity();
+        const enderecoValid = enderecoField && enderecoField.value.trim() !== '';
+
+        section2NextBtn.disabled = !(nomeValid && cpfValid && emailValid && enderecoValid);
+    }
+
+    // ========== DROPDOWN DISCIPLINAS ==========
+    setupDropdownDisciplinas() {
+        const dropdownWrapper = document.querySelector('.dropdown');
+        const dropdownBtn = document.getElementById('dropdownBtn');
+        const dropdownContent = document.getElementById('dropdownContent');
+
+        if (!dropdownBtn || !dropdownWrapper || !dropdownContent) return;
+
+        this.updateDropdownText();
+
+        dropdownBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            dropdownWrapper.classList.toggle('open');
+            dropdownContent.style.display = dropdownWrapper.classList.contains('open') ? 'block' : 'none';
+        });
+
+        dropdownContent.addEventListener('click', e => e.stopPropagation());
+
+        const discCheckboxes = dropdownContent.querySelectorAll('input[name="disciplinas"]');
+        discCheckboxes.forEach(cb => {
+            cb.addEventListener('change', () => {
+                this.updateDisciplinasData();
+                this.updateDropdownText();
+            });
+        });
+
+        document.addEventListener('click', () => {
+            dropdownWrapper.classList.remove('open');
+            dropdownContent.style.display = 'none';
+        });
+    }
+
+    updateDropdownText() {
+        const dropdownBtn = document.getElementById('dropdownBtn');
+        const dropdownContent = document.getElementById('dropdownContent');
+        
+        if (!dropdownBtn || !dropdownContent) return;
+
+        const checkboxes = dropdownContent.querySelectorAll('input[name="disciplinas"]');
+        const selecionadas = Array.from(checkboxes).filter(c => c.checked).map(c => c.value);
+        
+        dropdownBtn.textContent = selecionadas.length 
+            ? selecionadas.join(', ') 
+            : 'Selecione as disciplinas que você pode lecionar';
+    }
+
+    updateDisciplinasData() {
+        const checkboxes = document.querySelectorAll('input[name="disciplinas"]:checked');
+        this.formData.disciplinas = Array.from(checkboxes).map(cb => cb.value);
+    }
+
+    // ========== EXPERIÊNCIAS TOGGLES ==========
+    setupExperienceToggles() {
+        this.setupToggle('expAulasToggle', 'expAulasBox', 'expAulas', 'descricaoExpAulas');
+        this.setupToggle('expNeuroToggle', 'expNeuroBox', 'expNeuro', 'descricaoExpNeuro');
+        this.setupToggle('expTdicsToggle', 'expTdicsBox', 'expTdics', 'descricaoTdics');
+    }
+
+    setupToggle(toggleId, boxId, dataKey, descKey) {
+        const toggle = document.getElementById(toggleId);
+        const box = document.getElementById(boxId);
+        
+        if (!toggle || !box) return;
+
+        toggle.addEventListener('change', () => {
+            const isChecked = toggle.checked;
+            box.classList.toggle('hidden', !isChecked);
+            
+            this.formData[dataKey] = isChecked ? 'sim' : 'não';
+            
+            if (!isChecked) {
+                const textarea = box.querySelector('textarea');
+                if (textarea) textarea.value = '';
+                this.formData[descKey] = '';
+            }
+        });
+
+        const textarea = box.querySelector('textarea');
+        if (textarea) {
+            textarea.addEventListener('input', (e) => {
+                this.formData[descKey] = e.target.value.trim();
+            });
+        }
+    }
+
+    // ========== SECTION 2 ==========
+    setupSection2() {
+        const section2NextBtn = document.getElementById('section2-next');
+        if (!section2NextBtn) return;
+
+        section2NextBtn.addEventListener('click', () => {
+            if (section2NextBtn.disabled) return;
+
+            this.saveSection2Data();
+            
+            console.log('=== 📋 DADOS SEÇÃO 2 ===');
+            console.log('Nome:', this.formData.nome);
+            console.log('CPF:', this.formData.cpf);
+            console.log('Email:', this.formData.email);
+            console.log('Endereço:', this.formData.endereco);
+            console.log('=======================');
+
+            this.showSection(3);
+        });
+    }
+
+    saveSection2Data() {
+        const nomeField = document.getElementById('nome');
+        const cpfField = document.getElementById('cpf');
+        const emailField = document.getElementById('email');
+        const enderecoField = document.getElementById('endereco');
+
+        this.formData.nome = nomeField ? nomeField.value.trim() : '';
+        this.formData.cpf = cpfField ? cpfField.value.replace(/\D/g, '') : '';
+        this.formData.email = emailField ? emailField.value.trim() : '';
+        this.formData.endereco = enderecoField ? enderecoField.value.trim() : '';
+    }
+
+    // ========== SECTION 3 ==========
+    setupSection3() {
+        this.setupVoltarSection3();
+        this.setupAvancarSection3();
+        this.setupDisponibilidade();
+        this.setupBairros();
+        this.setupNivelCurso();
+    }
+
+    setupVoltarSection3() {
+        const btnVoltar = document.querySelector('#section3 .btn-prev');
+        if (!btnVoltar) return;
+
+        btnVoltar.addEventListener('click', e => {
+            e.preventDefault();
+            this.clearSection2Fields();
+            this.showSection(2);
+        });
+    }
+
+    clearSection2Fields() {
+        const fields = ['nome', 'cpf', 'email', 'endereco'];
+        fields.forEach(field => {
+            const element = document.getElementById(field);
+            if (element) element.value = '';
+        });
+        console.log('⚠️ Campos da seção 2 resetados');
+    }
+
+    setupAvancarSection3() {
+        const btnAvancar = document.querySelector('#section3 .btn-next');
+        if (!btnAvancar) return;
+
+        btnAvancar.addEventListener('click', e => {
+            e.preventDefault();
+            this.saveSection3Data();
+            
+            console.log('=== 📋 DADOS SEÇÃO 3 ===');
+            console.log('Disponibilidade:', this.formData.disponibilidade);
+            console.log('Bairros:', this.formData.bairros);
+            console.log('Nível:', this.formData.nivel);
+            console.log('Curso:', this.formData.curso);
+            console.log('=======================');
+
+            this.showSection(4);
+        });
+    }
+
+    setupDisponibilidade() {
+        const dias = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
+        const tableRows = document.querySelectorAll('#section3 .schedule-table tbody tr');
+
+        tableRows.forEach((row, index) => {
+            const checkboxes = row.querySelectorAll('input[type="checkbox"]');
+            
+            checkboxes.forEach((checkbox, turnoIndex) => {
+                checkbox.addEventListener('change', () => {
+                    const turno = turnoIndex === 0 ? 'Manha' : 'Tarde';
+                    const key = `${dias[index]}${turno}`;
+                    this.formData.disponibilidade[key] = checkbox.checked;
+                });
+            });
+        });
+    }
+
+    setupBairros() {
+        const bairrosCheckboxes = document.querySelectorAll('input[name="bairros"]');
+        
+        bairrosCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                this.updateBairrosData();
+            });
+        });
+    }
+
+    updateBairrosData() {
+        const bairrosSelecionados = Array.from(document.querySelectorAll('input[name="bairros"]:checked'))
+            .map(cb => {
+                const descElement = cb.closest('.item-row')?.querySelector('.desc');
+                return descElement ? descElement.textContent.trim() : '';
+            })
+            .filter(Boolean);
+        
+        this.formData.bairros = bairrosSelecionados;
+    }
+
+    setupNivelCurso() {
+        const nivelRadios = document.querySelectorAll('input[name="nivel"]');
+        nivelRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    this.formData.nivel = e.target.value;
+                }
+            });
+        });
+
+        const cursoField = document.getElementById('curso');
+        if (cursoField) {
+            cursoField.addEventListener('input', (e) => {
+                this.formData.curso = e.target.value.trim();
+            });
+        }
+    }
+
+    saveSection3Data() {
+        this.updateBairrosData();
+    }
+
+    // ========== FORM SUBMIT ==========
+    setupFormSubmit() {
+        const form = document.getElementById('meuFormulario');
+        if (!form) return;
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            await this.handleFormSubmit();
+        });
+    }
+
+    async handleFormSubmit() {
+        const submitBtn = document.querySelector('button[type="submit"]');
+        
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Enviando...';
+        }
+
+        try {
+            // Testa conexão
+            const connectionOk = await this.testSupabaseConnection();
+            if (!connectionOk) {
+                throw new Error('Erro de conexão com o banco de dados');
+            }
+
+            // CAPTURA TODOS OS DADOS PARA LOG (mas só envia o nome)
+            this.captureAllDataForLog();
+            
+            console.log('=== 📊 DADOS COMPLETOS CAPTURADOS ===');
+            console.log('DADOS PESSOAIS:');
+            console.log('  Nome:', this.formData.nome);
+            console.log('  CPF:', this.formData.cpf);
+            console.log('  Email:', this.formData.email);
+            console.log('  Endereço:', this.formData.endereco);
+            
+            console.log('FORMAÇÃO:');
+            console.log('  Disciplinas:', this.formData.disciplinas);
+            console.log('  Nível:', this.formData.nivel);
+            console.log('  Curso:', this.formData.curso);
+            
+            console.log('EXPERIÊNCIAS:');
+            console.log('  Exp. Aulas:', this.formData.expAulas);
+            console.log('  Descrição Aulas:', this.formData.descricaoExpAulas);
+            console.log('  Exp. Neuro:', this.formData.expNeuro);
+            console.log('  Descrição Neuro:', this.formData.descricaoExpNeuro);
+            console.log('  Exp. TDICs:', this.formData.expTdics);
+            console.log('  Descrição TDICs:', this.formData.descricaoTdics);
+            
+            console.log('DISPONIBILIDADE:');
+            console.log('  Segunda:', { manhã: this.formData.disponibilidade.segManha, tarde: this.formData.disponibilidade.segTarde });
+            console.log('  Terça:', { manhã: this.formData.disponibilidade.terManha, tarde: this.formData.disponibilidade.terTarde });
+            console.log('  Quarta:', { manhã: this.formData.disponibilidade.quaManha, tarde: this.formData.disponibilidade.quaTarde });
+            console.log('  Quinta:', { manhã: this.formData.disponibilidade.quiManha, tarde: this.formData.disponibilidade.quiTarde });
+            console.log('  Sexta:', { manhã: this.formData.disponibilidade.sexManha, tarde: this.formData.disponibilidade.sexTarde });
+            console.log('  Sábado:', { manhã: this.formData.disponibilidade.sabManha, tarde: this.formData.disponibilidade.sabTarde });
+            
+            console.log('BAIRROS:');
+            console.log('  Bairros selecionados:', this.formData.bairros);
+            console.log('================================');
+
+            // PREPARA DADOS PARA ENVIO - APENAS NOME
+            const finalData = {
+                nome: this.formData.nome || 'Não informado'
+            };
+
+            console.log('📤 ENVIANDO PARA SUPABASE (apenas nome):', finalData);
+
+            // Envia apenas o nome para o Supabase
+            const { data, error } = await this.supabase
+                .from('candidatoSelecao')
+                .insert([finalData]);
+
+            if (error) throw error;
+
+            console.log('✅ Dados enviados com sucesso para Supabase:', data);
+            this.showSection(5); // Tela de sucesso
+
+        } catch (error) {
+            console.error('❌ Erro ao enviar formulário:', error);
+            alert(`Erro ao enviar: ${error.message}`);
+        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Enviar Cadastro';
+            }
+        }
+    }
+
+    captureAllDataForLog() {
+        // Garante que todos os dados estejam atualizados antes do log
+        this.saveSection2Data();
+        this.updateDisciplinasData();
+        this.updateBairrosData();
+        
+        // Captura nível e curso atualizados
+        const nivelSelected = document.querySelector('input[name="nivel"]:checked');
+        this.formData.nivel = nivelSelected ? nivelSelected.value : '';
+        
+        const cursoField = document.getElementById('curso');
+        this.formData.curso = cursoField ? cursoField.value.trim() : '';
+    }
+
+    // ========== EVENT LISTENERS SETUP ==========
+    setupEventListeners() {
+        // Campos da seção 2 para validação
+        const section2Fields = ['nome', 'cpf', 'email', 'endereco'];
+        section2Fields.forEach(field => {
+            const element = document.getElementById(field);
+            if (element) {
+                element.addEventListener('input', () => this.validateSection2());
+            }
+        });
+
+        // Máscara do CPF
+        this.setupMaskCPF();
+
+        // Dropdown de disciplinas
+        this.setupDropdownDisciplinas();
+
+        // Toggles de experiência
+        this.setupExperienceToggles();
+
+        // Navegação entre seções
+        this.setupSection2();
+        this.setupSection3();
+
+        // Submit do formulário
+        this.setupFormSubmit();
+
+        console.log('✅ Event listeners configurados');
+    }
+}
+
+// ========== INICIALIZAÇÃO DA APLICAÇÃO ==========
+document.addEventListener('DOMContentLoaded', function() {
+    window.formApp = new FormularioApp();
+});
+
+// ========== FUNÇÕES GLOBAIS PARA HTML ==========
+function showSection(sectionNumber) {
+    if (window.formApp) {
+        window.formApp.showSection(sectionNumber);
+    }
 }
 
 function toggleGroup(headerElement) {
-    const groupElement = headerElement.closest('.group');
-    if (!groupElement) return;
-    const itemsElement = groupElement.querySelector('.items');
-    if (!itemsElement) return;
-
-    const isHidden = itemsElement.classList.contains('hidden');
-    itemsElement.classList.toggle('hidden', !isHidden);
-    groupElement.classList.toggle('expanded', isHidden);
-    groupElement.classList.toggle('collapsed', !isHidden);
+    if (window.formApp) {
+        window.formApp.toggleGroup(headerElement);
+    }
 }
-
-document.addEventListener('DOMContentLoaded', function () {
-    // Elementos principais
-    const form = document.getElementById('meuFormulario');
-    const nomeField = document.getElementById('nome');
-    const cpfField = document.getElementById('cpf');
-    const emailField = document.getElementById('email');
-    const enderecoField = document.getElementById('endereco');
-    const section2NextBtn = document.getElementById('section2-next');
-
-    // Inicializa grupos colapsados
-    document.querySelectorAll('.group').forEach(g => g.classList.add('collapsed'));
-
-    // Formatação CPF (segura: só roda se existir o campo)
-    if (cpfField) {
-        cpfField.addEventListener('input', function (e) {
-            let v = e.target.value.replace(/\D/g, '');
-            if (v.length > 11) v = v.slice(0, 11);
-            v = v.replace(/(\d{3})(\d)/, '$1.$2');
-            v = v.replace(/(\d{3})(\d)/, '$1.$2');
-            v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-            e.target.value = v;
-        });
-    }
-
-    // Validação seção 2 (habilita/desabilita botão Avançar)
-    function validateSection2() {
-        if (!section2NextBtn || !nomeField || !cpfField || !emailField || !enderecoField) return;
-        const nomeValid = nomeField.value.trim() !== '';
-        const cpfValid = cpfField.value.replace(/\D/g, '').length === 11;
-        const emailValid = emailField.value.trim() !== '' && emailField.checkValidity();
-        const enderecoValid = enderecoField.value.trim() !== '';
-        section2NextBtn.disabled = !(nomeValid && cpfValid && emailValid && enderecoValid);
-    }
-    if (nomeField) nomeField.addEventListener('input', validateSection2);
-    if (cpfField) cpfField.addEventListener('input', validateSection2);
-    if (emailField) emailField.addEventListener('input', validateSection2);
-    if (enderecoField) enderecoField.addEventListener('input', validateSection2);
-    validateSection2();
-
-    // Dropdown de disciplinas (seguro contra null)
-    const dropdownBtn = document.getElementById('dropdownBtn');
-    const dropdownContent = document.getElementById('dropdownContent');
-    const disciplinasCheckboxes = dropdownContent ? dropdownContent.querySelectorAll('input[name="disciplinas"]') : [];
-
-    if (dropdownBtn) {
-        dropdownBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (!dropdownContent) return;
-            dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
-        });
-    }
-
-    disciplinasCheckboxes.forEach(cb => {
-        cb.addEventListener('change', () => {
-            const selecionadas = Array.from(disciplinasCheckboxes).filter(i => i.checked).map(i => i.value);
-            if (dropdownBtn) dropdownBtn.textContent = selecionadas.length ? selecionadas.join(', ') : 'Selecione as disciplinas que você pode lecionar';
-        });
-    });
-
-    document.addEventListener('click', (ev) => {
-        if (!ev.target.closest('.dropdown') && dropdownContent) dropdownContent.style.display = 'none';
-    });
-
-    // Toggles de experiência e caixas associadas
-    const expAulasToggle = document.getElementById('expAulasToggle');
-    const expAulasBox = document.getElementById('expAulasBox');
-    const expNeuroToggle = document.getElementById('expNeuroToggle');
-    const expNeuroBox = document.getElementById('expNeuroBox');
-    const expTdicsToggle = document.getElementById('expTdicsToggle');
-    const expTdicsBox = document.getElementById('expTdicsBox');
-
-    if (expAulasToggle && expAulasBox) expAulasToggle.addEventListener('change', () => expAulasBox.classList.toggle('hidden', !expAulasToggle.checked));
-    if (expNeuroToggle && expNeuroBox) expNeuroToggle.addEventListener('change', () => expNeuroBox.classList.toggle('hidden', !expNeuroToggle.checked));
-    if (expTdicsToggle && expTdicsBox) expTdicsToggle.addEventListener('change', () => expTdicsBox.classList.toggle('hidden', !expTdicsToggle.checked));
-
-    // --- CAPTURA e LOG: clique em Avançar da section2 ---
-    if (section2NextBtn) {
-        section2NextBtn.addEventListener('click', function (e) {
-            // botão pode estar desabilitado; se estiver, não prossegue
-            if (section2NextBtn.disabled) return;
-            const nome = nomeField ? nomeField.value.trim() : '';
-            const cpf = cpfField ? cpfField.value.trim() : '';
-            const email = emailField ? emailField.value.trim() : '';
-            const endereco = enderecoField ? enderecoField.value.trim() : '';
-
-            console.log('--- Dados Section 2 (ao avançar) ---');
-            console.log('Nome:', nome);
-            console.log('CPF:', cpf);
-            console.log('Email:', email);
-            console.log('Endereço:', endereco);
-
-            // garante navegação (se HTML já chamar showSection, isto é redundante mas inofensivo)
-            showSection(3);
-        });
-    }
-
-    // --- BOTÕES da section3 (Voltar e Avançar) ---
-    const btnVoltarSection3 = document.querySelector('#section3 .btn-prev');
-    const btnAvancarSection3 = document.querySelector('#section3 .btn-next');
-
-    if (btnVoltarSection3) {
-        btnVoltarSection3.addEventListener('click', function (e) {
-            e.preventDefault();
-            if (nomeField) nomeField.value = '';
-            if (cpfField) cpfField.value = '';
-            if (emailField) emailField.value = '';
-            if (enderecoField) enderecoField.value = '';
-            console.log('⚠️ Valores resetados: nome, cpf, email, endereco');
-            showSection(2);
-        });
-    }
-
-    if (btnAvancarSection3) {
-        btnAvancarSection3.addEventListener('click', function (e) {
-            e.preventDefault();
-
-            // Campos principais
-            const nome = nomeField ? nomeField.value.trim() : '';
-            const cpf = cpfField ? cpfField.value.trim() : '';
-            const email = emailField ? emailField.value.trim() : '';
-            const endereco = enderecoField ? enderecoField.value.trim() : '';
-
-            // Disponibilidade dias/turnos
-            const dias = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
-            const disponibilidade = {};
-            const linhas = document.querySelectorAll('#section3 .schedule-table tbody tr');
-
-            linhas.forEach((tr, i) => {
-                const checks = tr.querySelectorAll('input[type="checkbox"]');
-                const manha = checks && checks[0] ? !!checks[0].checked : false;
-                const tarde = checks && checks[1] ? !!checks[1].checked : false;
-                const diaKey = dias[i] || `dia${i}`;
-                disponibilidade[`${diaKey}Manha`] = manha;
-                disponibilidade[`${diaKey}Tarde`] = tarde;
-            });
-
-            // Expõe as variáveis nomeadas (compatíveis com o banco)
-            const segManha = disponibilidade.segManha || false;
-            const segTarde = disponibilidade.segTarde || false;
-            const terManha = disponibilidade.terManha || false;
-            const terTarde = disponibilidade.terTarde || false;
-            const quaManha = disponibilidade.quaManha || false;
-            const quaTarde = disponibilidade.quaTarde || false;
-            const quiManha = disponibilidade.quiManha || false;
-            const quiTarde = disponibilidade.quiTarde || false;
-            const sexManha = disponibilidade.sexManha || false;
-            const sexTarde = disponibilidade.sexTarde || false;
-            const sabManha = disponibilidade.sabManha || false;
-            const sabTarde = disponibilidade.sabTarde || false;
-
-            // Bairros (descrições concatenadas)
-            const bairrosSelecionados = [];
-            document.querySelectorAll("input[name='bairros']:checked").forEach(cb => {
-                const itemRow = cb.closest('.item-row');
-                if (!itemRow) return;
-                const descEl = itemRow.querySelector('.desc');
-                if (descEl) {
-                    const txt = descEl.textContent.trim();
-                    if (txt) bairrosSelecionados.push(txt);
-                }
-            });
-            const bairros = bairrosSelecionados.join('. ');
-
-            // --- LOG ---
-            console.log('--- Dados Section 2 (re-uso) ---');
-            console.log('Nome:', nome);
-            console.log('CPF:', cpf);
-            console.log('Email:', email);
-            console.log('Endereço:', endereco);
-
-            console.log('--- Disponibilidade ---');
-            console.log('segManha:', segManha, 'segTarde:', segTarde);
-            console.log('terManha:', terManha, 'terTarde:', terTarde);
-            console.log('quaManha:', quaManha, 'quaTarde:', quaTarde);
-            console.log('quiManha:', quiManha, 'quiTarde:', quiTarde);
-            console.log('sexManha:', sexManha, 'sexTarde:', sexTarde);
-            console.log('sabManha:', sabManha, 'sabTarde:', sabTarde);
-
-            console.log('Bairros:', bairros);
-
-            showSection(4);
-        });
-    }
-
-    // --- SUBMIT final (section4 -> section5) ---
-    if (form) {
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            // Disciplinas como string: "Matemática, Português"
-            const disciplinasChecked = Array.from(document.querySelectorAll('input[name="disciplinas"]:checked')).map(c => c.value);
-            const disciplinas = disciplinasChecked.join(', ');
-
-            // Nivel
-            const nivelEl = document.querySelector('input[name="nivel"]:checked');
-            const nivel = nivelEl ? nivelEl.value : '';
-
-            // Curso
-            const curso = (document.getElementById('curso') ? document.getElementById('curso').value.trim() : '');
-
-            // Toggles ('sim' / 'não') + textos
-            const expAulasValor = (document.getElementById('expAulasToggle') && document.getElementById('expAulasToggle').checked) ? 'sim' : 'não';
-            const expAulasTexto = (expAulasValor === 'sim' && document.getElementById('expAulasText')) ? document.getElementById('expAulasText').value.trim() : '';
-
-            const expNeuroValor = (document.getElementById('expNeuroToggle') && document.getElementById('expNeuroToggle').checked) ? 'sim' : 'não';
-            const expNeuroTexto = (expNeuroValor === 'sim' && document.getElementById('expNeuroText')) ? document.getElementById('expNeuroText').value.trim() : '';
-
-            const expTdicsValor = (document.getElementById('expTdicsToggle') && document.getElementById('expTdicsToggle').checked) ? 'sim' : 'não';
-            const expTdicsTexto = (expTdicsValor === 'sim' && document.getElementById('expTdicsText')) ? document.getElementById('expTdicsText').value.trim() : '';
-
-            // --- LOG para conferência antes do envio real ---
-            console.log('--- Envio Final (Section 4) ---');
-            console.log('Disciplinas:', disciplinas);
-            console.log('Nível acadêmico:', nivel);
-            console.log('Curso:', curso);
-
-            console.log('expAulas:', expAulasValor, expAulasTexto ? '→ ' + expAulasTexto : '');
-            console.log('expNeuro:', expNeuroValor, expNeuroTexto ? '→ ' + expNeuroTexto : '');
-            console.log('expTdics:', expTdicsValor, expTdicsTexto ? '→ ' + expTdicsTexto : '');
-
-            // segue para seção de sucesso
-            showSection(5);
-        });
-    }
-});
