@@ -465,25 +465,45 @@ class FormularioApp {
                 // ======== Formato dos dados enviados ========
                 // nomeDaColuna: this.formData.nomeDaVariavel || 'valor padrão' ou
 
+                // Informações pessoais
                 nome: this.formData.nome || 'Não informado',
                 cpf: this.formData.cpf || '', // Correção: adicionei as aspas vazias
                 email: this.formData.email || '',
                 endereco: this.formData.endereco || '',
+
+                // Informações de disponibilidade
                 bairros: this.formData.bairros.join(', ') || '',
 
                 // Resutlado checkboxes dias de disponibilidade
-                // segManha: this.formData.disponibilidade.segManha || false,
-                // segTarde: this.formData.disponibilidade.segTarde || false,
-                // terManha: this.formData.disponibilidade.terManha || false,
-                // terTarde: this.formData.disponibilidade.terTarde || false,
-                // quaManha: this.formData.disponibilidade.quaManha || false,
-                // quaTarde: this.formData.disponibilidade.quaTarde || false,
-                // quiManha: this.formData.disponibilidade.quiManha || false,
-                // quiTarde: this.formData.disponibilidade.quiTarde || false,
-                // sexManha: this.formData.disponibilidade.sexManha || false,
-                // sexTarde: this.formData.disponibilidade.sexTarde || false,
-                // sabManha: this.formData.disponibilidade.sabManha || false,
-                // sabTarde: this.formData.disponibilidade.sabTarde || false,
+                segManha: this.formData.disponibilidade.segManha || false,
+                segTarde: this.formData.disponibilidade.segTarde || false,
+                terManha: this.formData.disponibilidade.terManha || false,
+                terTarde: this.formData.disponibilidade.terTarde || false,
+                quaManha: this.formData.disponibilidade.quaManha || false,
+                quaTarde: this.formData.disponibilidade.quaTarde || false,
+                quiManha: this.formData.disponibilidade.quiManha || false,
+                quiTarde: this.formData.disponibilidade.quiTarde || false,
+                sexManha: this.formData.disponibilidade.sexManha || false,
+                sexTarde: this.formData.disponibilidade.sexTarde || false,
+                sabManha: this.formData.disponibilidade.sabManha || false,
+                sabTarde: this.formData.disponibilidade.sabTarde || false,
+
+
+                // Informações de formação
+                disciplinas: this.formData.disciplinas.join(', ') || '',
+                nivel: this.formData.nivel || '',
+                curso: this.formData.curso || '',
+
+                // Experiências
+                expAulas: this.formData.expAulas || 'não',
+                descricaoExpAulas: this.formData.descricaoExpAulas || '',
+
+                expNeuro: this.formData.expNeuro || 'não',
+                descricaoExpNeuro: this.formData.descricaoExpNeuro || '',
+                
+                expTdics: this.formData.expTdics || 'não',
+                descricaoTdics: this.formData.descricaoTdics || ''
+                // ============================================
 
             };
 
