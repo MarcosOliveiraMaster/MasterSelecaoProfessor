@@ -15,6 +15,10 @@ class FormularioApp {
             email: '',
             endereco: '',
             disciplinas: [],
+            cep: '',
+            enderecoOficial: '',
+            contato: '',
+            pix: '',
             nivel: '',
             curso: '',
             expAulas: 'não',
@@ -47,35 +51,15 @@ class FormularioApp {
     // ========== SUPABASE ==========
     async initializeSupabase() {
         try {
-            if (typeof supabase !== 'undefined' && supabase.createClient) {
-                this.supabase = supabase.createClient(SUPABASE_CONFIG.URL, SUPABASE_CONFIG.ANON_KEY);
-                console.log('✅ Supabase inicializado');
-            } else {
-                console.warn('Supabase não encontrado, carregando dinamicamente...');
-                await this.loadSupabaseScript();
+            if (!window.supabase || typeof window.supabase.createClient !== 'function') {
+                throw new Error('Biblioteca Supabase não encontrada. Verifique se o script CDN foi carregado.');
             }
+            this.supabase = window.supabase.createClient(SUPABASE_CONFIG.URL, SUPABASE_CONFIG.ANON_KEY);
+            console.log('✅ Supabase inicializado');
         } catch (error) {
             console.error('❌ Erro ao inicializar Supabase:', error);
+            this.supabase = null;
         }
-    }
-
-    loadSupabaseScript() {
-        return new Promise((resolve, reject) => {
-            if (window.supabase) {
-                this.supabase = supabase.createClient(SUPABASE_CONFIG.URL, SUPABASE_CONFIG.ANON_KEY);
-                resolve();
-                return;
-            }
-            
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-            script.onload = () => {
-                this.supabase = supabase.createClient(SUPABASE_CONFIG.URL, SUPABASE_CONFIG.ANON_KEY);
-                resolve();
-            };
-            script.onerror = reject;
-            document.head.appendChild(script);
-        });
     }
 
     async testSupabaseConnection() {
@@ -85,12 +69,17 @@ class FormularioApp {
         }
         
         try {
+            // Consulta simples para verificar se a tabela responde
             const { data, error } = await this.supabase
                 .from('candidatoSelecao')
-                .select('count')
+                .select('*')
                 .limit(1);
-                
-            if (error) throw error;
+
+            if (error) {
+                console.error('Erro na query de teste Supabase:', error);
+                return false;
+            }
+
             console.log('✅ Conexão com Supabase: OK');
             return true;
         } catch (error) {
@@ -107,7 +96,7 @@ class FormularioApp {
         const sectionEl = document.getElementById(`section${sectionNumber}`);
         if (sectionEl) sectionEl.classList.add('active');
         
-        const progressStep = document.querySelector(`.progress-step:nth-child(${sectionNumber})`);
+        const progressStep = document.querySelector(`.progress-step:nth-child(${Math.min(sectionNumber,4)})`);
         if (progressStep) progressStep.classList.add('active');
         
         this.currentSection = sectionNumber;
@@ -132,7 +121,107 @@ class FormularioApp {
         this.validateSection2();
     }
 
-    // ========== Validação de CPF da inscrição ==========
+    // ========== MÁSCARA TELEFONE ==========
+    setupMaskTelefone() {
+        const telefoneField = document.getElementById('contato');
+        if (!telefoneField) return;
+
+        telefoneField.addEventListener('input', e => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            
+            // Formatação: (00) 0.0000-0000 ou (00) 00000-0000
+            let formatted = '';
+            if (value.length > 0) {
+                formatted = '(' + value.substring(0, 2);
+            }
+            if (value.length > 2) {
+                // se celular com 9 dígitos após DDD
+                if (value.length >= 11) {
+                    formatted += ') ' + value.substring(2, 7) + '-' + value.substring(7, 11);
+                } else {
+                    formatted += ') ' + value.substring(2, 6) + (value.length > 6 ? '-' + value.substring(6) : '');
+                }
+            }
+            
+            e.target.value = formatted;
+            this.validateSection2();
+        });
+    }
+
+    // ========== MÁSCARA E BUSCA DE CEP ==========
+    setupMaskCEP() {
+        const cepField = document.getElementById('cep');
+        if (!cepField) return;
+
+        const tryBuscar = (val) => {
+            const numeric = (val || '').replace(/\D/g, '');
+            if (numeric.length === 8) {
+                const formatted = numeric.replace(/(\d{5})(\d)/, '$1-$2');
+                cepField.value = formatted;
+                this.buscarCEP(numeric);
+            }
+        };
+
+        cepField.addEventListener('input', e => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 8) value = value.slice(0, 8);
+            if (value.length > 5) {
+                value = value.replace(/(\d{5})(\d)/, '$1-$2');
+            }
+            e.target.value = value;
+            this.validateSection2();
+
+            if (value.replace(/\D/g, '').length === 8) {
+                // busca quando completar 8 dígitos
+                this.buscarCEP(value.replace(/\D/g, ''));
+            }
+        });
+
+        // caso cole o cep
+        cepField.addEventListener('paste', (ev) => {
+            setTimeout(() => tryBuscar(cepField.value), 50);
+        });
+
+        cepField.addEventListener('blur', (ev) => {
+            tryBuscar(ev.target.value);
+        });
+    }
+
+    async buscarCEP(cepNumeros) {
+        try {
+            const cepClean = String(cepNumeros).replace(/\D/g, '');
+            if (cepClean.length !== 8) return;
+
+            const response = await fetch(`https://brasilapi.com.br/api/cep/v2/${cepClean}`);
+            if (!response.ok) throw new Error('CEP não encontrado');
+
+            const data = await response.json();
+            const enderecoFormatado = `${data.street}, ${data.neighborhood}, ${data.city} - ${data.state}`;
+
+            const enderecoOficialField = document.getElementById('enderecoOficial');
+            if (enderecoOficialField) {
+                enderecoOficialField.value = enderecoFormatado;
+                this.formData.enderecoOficial = enderecoFormatado;
+                enderecoOficialField.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+
+            console.log('✅ Endereço encontrado via BrasilAPI:', enderecoFormatado);
+            this.validateSection2();
+        } catch (error) {
+            console.error('❌ Erro ao buscar CEP:', error);
+            const enderecoOficialField = document.getElementById('enderecoOficial');
+            if (enderecoOficialField) {
+                enderecoOficialField.value = '';
+                this.formData.enderecoOficial = '';
+                enderecoOficialField.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+            // feedback claro ao usuário
+            alert('CEP não encontrado. Verifique o CEP digitado.');
+        }
+    }
+
+    // ========== MÁSCARA CPF ==========
     setupMaskCPF() {
         const cpfField = document.getElementById('cpf');
         if (!cpfField) return;
@@ -150,6 +239,7 @@ class FormularioApp {
         });
     }
 
+    // ========== VALIDAÇÃO SEÇÃO 2 ==========
     validateSection2() {
         const section2NextBtn = document.getElementById('section2-next');
         if (!section2NextBtn) return;
@@ -157,14 +247,36 @@ class FormularioApp {
         const nomeField = document.getElementById('nome');
         const cpfField = document.getElementById('cpf');
         const emailField = document.getElementById('email');
+        const contatoField = document.getElementById('contato');
+        const cepField = document.getElementById('cep');
+        const enderecoOficialField = document.getElementById('enderecoOficial');
         const enderecoField = document.getElementById('endereco');
 
         const nomeValid = nomeField && nomeField.value.trim() !== '';
         const cpfValid = cpfField && cpfField.value.replace(/\D/g, '').length === 11;
         const emailValid = emailField && emailField.value.trim() !== '' && emailField.checkValidity();
+        const contatoValid = contatoField && contatoField.value.replace(/\D/g, '').length >= 10; // aceita 10 ou 11
+        const cepValid = cepField && cepField.value.replace(/\D/g, '').length === 8;
+        const enderecoOficialValid = enderecoOficialField && enderecoOficialField.value.trim() !== '';
         const enderecoValid = enderecoField && enderecoField.value.trim() !== '';
 
-        section2NextBtn.disabled = !(nomeValid && cpfValid && emailValid && enderecoValid);
+        section2NextBtn.disabled = !(nomeValid && cpfValid && emailValid && contatoValid && cepValid && enderecoOficialValid && enderecoValid);
+    }
+
+    // ========== VALIDAÇÃO SEÇÃO 4 ==========
+    validateSection4() {
+        const submitBtn = document.querySelector('button[type="submit"]');
+        if (!submitBtn) return false;
+
+        const pixField = document.getElementById('pix');
+        const nivelSelected = document.querySelector('input[name="nivel"]:checked');
+        const cursoField = document.getElementById('curso');
+
+        const pixValid = pixField && pixField.value.trim() !== '';
+        const nivelValid = nivelSelected !== null;
+        const cursoValid = cursoField && cursoField.value.trim() !== '';
+
+        return pixValid && nivelValid && cursoValid;
     }
 
     // ========== DROPDOWN DISCIPLINAS ==========
@@ -181,6 +293,7 @@ class FormularioApp {
             e.stopPropagation();
             dropdownWrapper.classList.toggle('open');
             dropdownContent.style.display = dropdownWrapper.classList.contains('open') ? 'block' : 'none';
+            dropdownContent.setAttribute('aria-hidden', dropdownWrapper.classList.contains('open') ? 'false' : 'true');
         });
 
         dropdownContent.addEventListener('click', e => e.stopPropagation());
@@ -196,6 +309,7 @@ class FormularioApp {
         document.addEventListener('click', () => {
             dropdownWrapper.classList.remove('open');
             dropdownContent.style.display = 'none';
+            dropdownContent.setAttribute('aria-hidden', 'true');
         });
     }
 
@@ -239,8 +353,10 @@ class FormularioApp {
             
             if (!isChecked) {
                 const textarea = box.querySelector('textarea');
-                if (textarea) textarea.value = '';
-                this.formData[descKey] = '';
+                if (textarea) {
+                    textarea.value = '';
+                    this.formData[descKey] = '';
+                }
             }
         });
 
@@ -257,16 +373,20 @@ class FormularioApp {
         const section2NextBtn = document.getElementById('section2-next');
         if (!section2NextBtn) return;
 
-        section2NextBtn.addEventListener('click', () => {
+        section2NextBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             if (section2NextBtn.disabled) return;
 
             this.saveSection2Data();
-            
+
             console.log('=== 📋 DADOS SEÇÃO 2 ===');
             console.log('Nome:', this.formData.nome);
             console.log('CPF:', this.formData.cpf);
             console.log('Email:', this.formData.email);
-            console.log('Endereço:', this.formData.endereco);
+            console.log('Contato:', this.formData.contato);
+            console.log('CEP:', this.formData.cep);
+            console.log('Endereço Oficial:', this.formData.enderecoOficial);
+            console.log('Complemento:', this.formData.endereco);
             console.log('=======================');
 
             this.showSection(3);
@@ -277,11 +397,17 @@ class FormularioApp {
         const nomeField = document.getElementById('nome');
         const cpfField = document.getElementById('cpf');
         const emailField = document.getElementById('email');
+        const contatoField = document.getElementById('contato');
+        const cepField = document.getElementById('cep');
+        const enderecoOficialField = document.getElementById('enderecoOficial');
         const enderecoField = document.getElementById('endereco');
 
         this.formData.nome = nomeField ? nomeField.value.trim() : '';
         this.formData.cpf = cpfField ? cpfField.value.replace(/\D/g, '') : '';
         this.formData.email = emailField ? emailField.value.trim() : '';
+        this.formData.contato = contatoField ? contatoField.value.replace(/\D/g, '') : '';
+        this.formData.cep = cepField ? cepField.value.replace(/\D/g, '') : '';
+        this.formData.enderecoOficial = enderecoOficialField ? enderecoOficialField.value.trim() : '';
         this.formData.endereco = enderecoField ? enderecoField.value.trim() : '';
     }
 
@@ -291,7 +417,6 @@ class FormularioApp {
         this.setupAvancarSection3();
         this.setupDisponibilidade();
         this.setupBairros();
-        this.setupNivelCurso();
     }
 
     setupVoltarSection3() {
@@ -300,18 +425,8 @@ class FormularioApp {
 
         btnVoltar.addEventListener('click', e => {
             e.preventDefault();
-            this.clearSection2Fields();
             this.showSection(2);
         });
-    }
-
-    clearSection2Fields() {
-        const fields = ['nome', 'cpf', 'email', 'endereco'];
-        fields.forEach(field => {
-            const element = document.getElementById(field);
-            if (element) element.value = '';
-        });
-        console.log('⚠️ Campos da seção 2 resetados');
     }
 
     setupAvancarSection3() {
@@ -325,8 +440,6 @@ class FormularioApp {
             console.log('=== 📋 DADOS SEÇÃO 3 ===');
             console.log('Disponibilidade:', this.formData.disponibilidade);
             console.log('Bairros:', this.formData.bairros);
-            console.log('Nível:', this.formData.nivel);
-            console.log('Curso:', this.formData.curso);
             console.log('=======================');
 
             this.showSection(4);
@@ -341,9 +454,11 @@ class FormularioApp {
             const checkboxes = row.querySelectorAll('input[type="checkbox"]');
             
             checkboxes.forEach((checkbox, turnoIndex) => {
+                const turno = turnoIndex === 0 ? 'Manha' : 'Tarde';
+                const key = `${dias[index]}${turno}`;
+                this.formData.disponibilidade[key] = !!checkbox.checked;
+                
                 checkbox.addEventListener('change', () => {
-                    const turno = turnoIndex === 0 ? 'Manha' : 'Tarde';
-                    const key = `${dias[index]}${turno}`;
                     this.formData.disponibilidade[key] = checkbox.checked;
                 });
             });
@@ -371,6 +486,16 @@ class FormularioApp {
         this.formData.bairros = bairrosSelecionados;
     }
 
+    saveSection3Data() {
+        this.updateBairrosData();
+    }
+
+    // ========== SECTION 4 ==========
+    setupSection4() {
+        this.setupNivelCurso();
+        this.setupPixValidation();
+    }
+
     setupNivelCurso() {
         const nivelRadios = document.querySelectorAll('input[name="nivel"]');
         nivelRadios.forEach(radio => {
@@ -389,8 +514,13 @@ class FormularioApp {
         }
     }
 
-    saveSection3Data() {
-        this.updateBairrosData();
+    setupPixValidation() {
+        const pixField = document.getElementById('pix');
+        if (pixField) {
+            pixField.addEventListener('input', () => {
+                this.formData.pix = pixField.value.trim();
+            });
+        }
     }
 
     // ========== FORM SUBMIT ==========
@@ -400,6 +530,13 @@ class FormularioApp {
 
         form.addEventListener('submit', async (event) => {
             event.preventDefault();
+            
+            // Validar seção 4 antes do envio
+            if (!this.validateSection4()) {
+                alert('Por favor, preencha todos os campos obrigatórios da seção 4: Nível acadêmico, Curso e PIX.');
+                return;
+            }
+            
             await this.handleFormSubmit();
         });
     }
@@ -413,104 +550,48 @@ class FormularioApp {
         }
 
         try {
-            // Testa conexão
             const connectionOk = await this.testSupabaseConnection();
             if (!connectionOk) {
                 throw new Error('Erro de conexão com o banco de dados');
             }
 
-            // CAPTURA TODOS OS DADOS PARA LOG (mas só envia o nome)
             this.captureAllDataForLog();
             
             console.log('=== 📊 DADOS COMPLETOS CAPTURADOS ===');
-            console.log('DADOS PESSOAIS:');
-            console.log('  Nome:', this.formData.nome);
-            console.log('  CPF:', this.formData.cpf);
-            console.log('  Email:', this.formData.email);
-            console.log('  Endereço:', this.formData.endereco);
-            
-            console.log('FORMAÇÃO:');
-            console.log('  Disciplinas:', this.formData.disciplinas);
-            console.log('  Nível:', this.formData.nivel);
-            console.log('  Curso:', this.formData.curso);
-            
-            console.log('EXPERIÊNCIAS:');
-            console.log('  Exp. Aulas:', this.formData.expAulas);
-            console.log('  Descrição Aulas:', this.formData.descricaoExpAulas);
-            console.log('  Exp. Neuro:', this.formData.expNeuro);
-            console.log('  Descrição Neuro:', this.formData.descricaoExpNeuro);
-            console.log('  Exp. TDICs:', this.formData.expTdics);
-            console.log('  Descrição TDICs:', this.formData.descricaoTdics);
-            
-            console.log('DISPONIBILIDADE:');
-            console.log('  Segunda:', { manhã: this.formData.disponibilidade.segManha, tarde: this.formData.disponibilidade.segTarde });
-            console.log('  Terça:', { manhã: this.formData.disponibilidade.terManha, tarde: this.formData.disponibilidade.terTarde });
-            console.log('  Quarta:', { manhã: this.formData.disponibilidade.quaManha, tarde: this.formData.disponibilidade.quaTarde });
-            console.log('  Quinta:', { manhã: this.formData.disponibilidade.quiManha, tarde: this.formData.disponibilidade.quiTarde });
-            console.log('  Sexta:', { manhã: this.formData.disponibilidade.sexManha, tarde: this.formData.disponibilidade.sexTarde });
-            console.log('  Sábado:', { manhã: this.formData.disponibilidade.sabManha, tarde: this.formData.disponibilidade.sabTarde });
-            
-            console.log('BAIRROS:');
-            console.log('  Bairros selecionados:', this.formData.bairros);
-            console.log('================================');
-
-            // PREPARA DADOS PARA ENVIO - Backbp inicial
-            // const finalData = {
-            //     nome: this.formData.nome || 'Não informado'
-            // };
-
-            // (nome + cpf):
+            // ... logs omitidos para brevidade (já estavam no seu código)
             const finalData = {
-
-                // ======== Formato dos dados enviados ========
-                // nomeDaColuna: this.formData.nomeDaVariavel || 'valor padrão' ou
-
-                // Informações pessoais
                 nome: this.formData.nome || 'Não informado',
-                cpf: this.formData.cpf || '', // Correção: adicionei as aspas vazias
+                cpf: this.formData.cpf || '',
                 email: this.formData.email || '',
-                endereco: this.formData.endereco || '',
-
-                // Informações de disponibilidade
+                endereco: `${this.formData.enderecoOficial}, CEP: ${this.formData.cep}. Complemento: ${this.formData.endereco}`,
+                contato: this.formData.contato || '',
+                pix: this.formData.pix || '',
                 bairros: this.formData.bairros.join(', ') || '',
-
-                // Resutlado checkboxes dias de disponibilidade
-                segManha: this.formData.disponibilidade.segManha || false,
-                segTarde: this.formData.disponibilidade.segTarde || false,
-                terManha: this.formData.disponibilidade.terManha || false,
-                terTarde: this.formData.disponibilidade.terTarde || false,
-                quaManha: this.formData.disponibilidade.quaManha || false,
-                quaTarde: this.formData.disponibilidade.quaTarde || false,
-                quiManha: this.formData.disponibilidade.quiManha || false,
-                quiTarde: this.formData.disponibilidade.quiTarde || false,
-                sexManha: this.formData.disponibilidade.sexManha || false,
-                sexTarde: this.formData.disponibilidade.sexTarde || false,
-                sabManha: this.formData.disponibilidade.sabManha || false,
-                sabTarde: this.formData.disponibilidade.sabTarde || false,
-
-
-                // Informações de formação
+                segManha: !!this.formData.disponibilidade.segManha,
+                segTarde: !!this.formData.disponibilidade.segTarde,
+                terManha: !!this.formData.disponibilidade.terManha,
+                terTarde: !!this.formData.disponibilidade.terTarde,
+                quaManha: !!this.formData.disponibilidade.quaManha,
+                quaTarde: !!this.formData.disponibilidade.quaTarde,
+                quiManha: !!this.formData.disponibilidade.quiManha,
+                quiTarde: !!this.formData.disponibilidade.quiTarde,
+                sexManha: !!this.formData.disponibilidade.sexManha,
+                sexTarde: !!this.formData.disponibilidade.sexTarde,
+                sabManha: !!this.formData.disponibilidade.sabManha,
+                sabTarde: !!this.formData.disponibilidade.sabTarde,
                 disciplinas: this.formData.disciplinas.join(', ') || '',
                 nivel: this.formData.nivel || '',
                 curso: this.formData.curso || '',
-
-                // Experiências
                 expAulas: this.formData.expAulas || 'não',
                 descricaoExpAulas: this.formData.descricaoExpAulas || '',
-
                 expNeuro: this.formData.expNeuro || 'não',
                 descricaoExpNeuro: this.formData.descricaoExpNeuro || '',
-                
                 expTdics: this.formData.expTdics || 'não',
                 descricaoTdics: this.formData.descricaoTdics || ''
-                // ============================================
-
             };
 
-            // confirmação de Envio no console
-            console.log('📤 ENVIANDO PARA SUPABASE (apenas nome):', finalData);
+            console.log('📤 ENVIANDO PARA SUPABASE:', finalData);
 
-            // Envia apenas o nome para o Supabase
             const { data, error } = await this.supabase
                 .from('candidatoSelecao')
                 .insert([finalData]);
@@ -518,11 +599,11 @@ class FormularioApp {
             if (error) throw error;
 
             console.log('✅ Dados enviados com sucesso para Supabase:', data);
-            this.showSection(5); // Tela de sucesso
+            this.showSection(5);
 
         } catch (error) {
             console.error('❌ Erro ao enviar formulário:', error);
-            alert(`Erro ao enviar: ${error.message}`);
+            alert(`Erro ao enviar: ${error.message || error}`);
         } finally {
             if (submitBtn) {
                 submitBtn.disabled = false;
@@ -532,23 +613,24 @@ class FormularioApp {
     }
 
     captureAllDataForLog() {
-        // Garante que todos os dados estejam atualizados antes do log
         this.saveSection2Data();
         this.updateDisciplinasData();
         this.updateBairrosData();
         
-        // Captura nível e curso atualizados
         const nivelSelected = document.querySelector('input[name="nivel"]:checked');
         this.formData.nivel = nivelSelected ? nivelSelected.value : '';
         
         const cursoField = document.getElementById('curso');
         this.formData.curso = cursoField ? cursoField.value.trim() : '';
+        
+        const pixField = document.getElementById('pix');
+        this.formData.pix = pixField ? pixField.value.trim() : '';
     }
 
     // ========== EVENT LISTENERS SETUP ==========
     setupEventListeners() {
         // Campos da seção 2 para validação
-        const section2Fields = ['nome', 'cpf', 'email', 'endereco'];
+        const section2Fields = ['nome', 'cpf', 'email', 'contato', 'cep', 'enderecoOficial', 'endereco'];
         section2Fields.forEach(field => {
             const element = document.getElementById(field);
             if (element) {
@@ -556,20 +638,19 @@ class FormularioApp {
             }
         });
 
-        // Máscara do CPF
+        // Máscaras
+        this.setupMaskTelefone();
         this.setupMaskCPF();
+        this.setupMaskCEP();
 
-        // Dropdown de disciplinas
+        // Componentes
         this.setupDropdownDisciplinas();
-
-        // Toggles de experiência
         this.setupExperienceToggles();
 
         // Navegação entre seções
         this.setupSection2();
         this.setupSection3();
-
-        // Submit do formulário
+        this.setupSection4();
         this.setupFormSubmit();
 
         console.log('✅ Event listeners configurados');

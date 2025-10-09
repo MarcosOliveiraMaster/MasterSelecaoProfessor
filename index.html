@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Formulário de Pré-Seleção para Professores</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Lexend:wght@400;700&display=swap" rel="stylesheet">
@@ -39,8 +39,8 @@
                     <p>Parabéns por ter chegado até aqui! É com grande felicidade que você foi pré-selecionado para integrar a equipe de professores da Master Educação! 🎉🎊</p>
                     <p>Estamos muito próximos de contratá-lo e gostaríamos de conhecer um pouco mais sobre suas habilidades, experiências e práticas de ensino. 👩‍🏫📚</p>
                     <p>Por favor, preencha nosso formulário de pré-seleção, que ajudará a alinhar expectativas e identificar seu potencial. 📝💻</p>
-                    <p>Conheça mais sobre a Master Educação clicando aqui em nossa página do Instagram: <a href="https://instagram.com/master.educacao">MasterEducação</a>! 🌎</p>
-                    <p>Dúvidas? Entre em contato conosco pelo número: <strong> <a href="https://wa.me/5582988862575">(82) 9.8886-2575</a></strong> 📱</p>
+                    <p>Conheça mais sobre a Master Educação clicando aqui em nossa página do Instagram: <a href="https://instagram.com/master.educacao" target="_blank" rel="noopener noreferrer">MasterEducação</a>! 🌎</p>
+                    <p>Dúvidas? Entre em contato conosco pelo número: <strong> <a href="https://wa.me/5582988862575" target="_blank" rel="noopener noreferrer">(82) 9.8886-2575</a></strong> 📱</p>
                 </div>
                 <div class="nav-buttons">
                     <button type="button" class="btn btn-next" onclick="showSection(2)">Avançar</button>
@@ -62,12 +62,23 @@
                     <input type="email" id="email" class="input-field" placeholder="Seu melhor e-mail" required>
                 </div>
                 <div class="input-group">
-                    <label for="endereco">Endereço:</label>
-                    <input type="text" id="endereco" class="input-field" placeholder="Rua, Número, Bairro, Cidade, Estado e CEP" required>
+                    <label for="contato">Contato:</label>
+                    <input type="text" id="contato" class="input-field" maxlength="15" placeholder="(82) 9.0000-0000" required>
                 </div>
+                
+                <!-- NOVA SEÇÃO DE ENDEREÇO -->
+                <div class="input-group">
+                    <label>Endereço</label>
+                    <div class="endereco-line">
+                        <input type="text" id="cep" class="input-field cep-field" placeholder="Digite seu CEP" required>
+                        <input type="text" id="enderecoOficial" class="input-field endereco-oficial-field" placeholder="Endereço" readonly>
+                    </div>
+                    <input type="text" id="endereco" class="input-field" placeholder="Digite o complemento" required>
+                </div>
+
                 <div class="nav-buttons">
                     <button type="button" class="btn btn-prev" onclick="showSection(1)">Voltar</button>
-                    <button type="button" class="btn btn-next" id="section2-next" onclick="showSection(3)" disabled>Avançar</button>
+                    <button type="button" class="btn btn-next" id="section2-next" disabled>Avançar</button>
                 </div>
             </div>
 
@@ -93,9 +104,7 @@
                 </table>
                 <div class="input-group">
                     <br><br>
-                    
                     <label>Selecione os itens que possui pelo menos um bairro que possa atender</label>
-                    
                     <div class="groups">
                         <div class="group">
                             <div class="group-header" onclick="toggleGroup(this)">
@@ -140,7 +149,7 @@
                     <label>Selecione as disciplinas que você pode lecionar</label>
                     <div class="dropdown">
                         <button type="button" class="dropdown-btn" id="dropdownBtn">Selecione as disciplinas que você pode lecionar</button>
-                        <div class="dropdown-content" id="dropdownContent">
+                        <div class="dropdown-content" id="dropdownContent" aria-hidden="true">
                             <label><input type="checkbox" name="disciplinas" value="Biologia"> Biologia</label>
                             <label><input type="checkbox" name="disciplinas" value="Ciências"> Ciências</label>
                             <label><input type="checkbox" name="disciplinas" value="Física"> Física</label>
@@ -184,13 +193,6 @@
                         <label>Sim</label>
                     </div>
 
-                    <!-- Toogle Original -->
-                    <!-- <label class="toggle-switch">
-                        <input type="checkbox" id="expAulasToggle">
-                        <span class="slider"></span>
-                    </label> -->
-                    
-
                     <div id="expAulasBox" class="hidden">
                         <textarea id="expAulasText" class="input-field textarea-field" placeholder="Escreva um pouco das suas experiências com aulas particulares"></textarea>
                     </div>
@@ -199,19 +201,11 @@
                 <div class="input-group experience-group">
                     <label>Você tem experiência com alunos neuro divergentes?</label>
 
-                    <!-- Toogle Original -->
-                    <!-- <label class="toggle-switch">
-                        <input type="checkbox" id="expNeuroToggle">
-                        <span class="slider"></span>
-                    </label> -->
-
-                    <!-- Novo Toogle -->
                     <div class="toogle">
                         <label>Não</label>
                             <label class="toggle-switch">
                                 <input type="checkbox" id="expNeuroToggle">
                                 <span class="slider"></span>
-                                
                             </label>
                         <label>Sim</label>
                     </div>
@@ -220,31 +214,27 @@
                         <textarea id="expNeuroText" class="input-field textarea-field" placeholder="Escreva um pouco das suas experiências com alunos neuro divergentes"></textarea>
                     </div>
 
-                    
-
                 </div>
 
                 <div class="input-group experience-group">
                     <label>Você tem experiência com TDICs?</label>
-                    <!-- Antigo Toogle -->
-                    <!-- <label class="toggle-switch">
-                        <input type="checkbox" id="expTdicsToggle">
-                        <span class="slider"></span>
-                    </label> -->
 
                     <div class="toogle">
                         <label>Não</label>
                             <label class="toggle-switch">
                                 <input type="checkbox" id="expTdicsToggle">
                                 <span class="slider"></span>
-                                
                             </label>
                         <label>Sim</label>
                     </div>
 
-
                     <div id="expTdicsBox" class="hidden">
                         <textarea id="expTdicsText" class="input-field textarea-field" placeholder="Escreva um pouco das suas experiências com Tdics"></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="pix">Digite seu Pix</label>
+                        <input type="text" id="pix" class="input-field" placeholder="Digite seu Pix" required>
                     </div>
                 </div>
 
@@ -263,9 +253,11 @@
             </div>
         </form>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="script.js"></script>
-   
+
+    <!-- Supabase (CDN único) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+    <!-- Script da aplicação (defer para garantir DOM carregado) -->
+    <script src="script.js" defer></script>
 </body>
 </html>
