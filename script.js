@@ -265,19 +265,32 @@ class FormularioApp {
 
     // ========== VALIDAÇÃO SEÇÃO 4 ==========
     validateSection4() {
-        const submitBtn = document.querySelector('button[type="submit"]');
-        if (!submitBtn) return false;
-
         const pixField = document.getElementById('pix');
         const nivelSelected = document.querySelector('input[name="nivel"]:checked');
         const cursoField = document.getElementById('curso');
+        const aceiteTermos = document.getElementById('aceiteTermos');
 
-        const pixValid = pixField && pixField.value.trim() !== '';
-        const nivelValid = nivelSelected !== null;
-        const cursoValid = cursoField && cursoField.value.trim() !== '';
+        // disciplinas obrigatórias
+        const disciplinasSelecionadas = this.formData.disciplinas.length > 0;
 
-        return pixValid && nivelValid && cursoValid;
+        // validação dos toggles
+        const expAulasValido = !document.getElementById('expAulasToggle').checked ||
+                            (document.getElementById('expAulasText').value.trim() !== '');
+        const expNeuroValido = !document.getElementById('expNeuroToggle').checked ||
+                            (document.getElementById('expNeuroText').value.trim() !== '');
+        const expTdicsValido = !document.getElementById('expTdicsToggle').checked ||
+                            (document.getElementById('expTdicsText').value.trim() !== '');
+
+        return (
+            pixField.value.trim() !== '' &&
+            nivelSelected !== null &&
+            cursoField.value.trim() !== '' &&
+            disciplinasSelecionadas &&
+            aceiteTermos.checked &&
+            expAulasValido && expNeuroValido && expTdicsValido
+        );
     }
+
 
     // ========== DROPDOWN DISCIPLINAS ==========
     setupDropdownDisciplinas() {
@@ -342,31 +355,29 @@ class FormularioApp {
     setupToggle(toggleId, boxId, dataKey, descKey) {
         const toggle = document.getElementById(toggleId);
         const box = document.getElementById(boxId);
-        
-        if (!toggle || !box) return;
+        const textarea = box ? box.querySelector('textarea') : null;
+
+        if (!toggle || !box || !textarea) return;
 
         toggle.addEventListener('change', () => {
             const isChecked = toggle.checked;
             box.classList.toggle('hidden', !isChecked);
-            
             this.formData[dataKey] = isChecked ? 'sim' : 'não';
             
+            // textarea obrigatório só quando toggle = sim
+            textarea.required = isChecked;
+
             if (!isChecked) {
-                const textarea = box.querySelector('textarea');
-                if (textarea) {
-                    textarea.value = '';
-                    this.formData[descKey] = '';
-                }
+                textarea.value = '';
+                this.formData[descKey] = '';
             }
         });
 
-        const textarea = box.querySelector('textarea');
-        if (textarea) {
-            textarea.addEventListener('input', (e) => {
-                this.formData[descKey] = e.target.value.trim();
-            });
-        }
+        textarea.addEventListener('input', (e) => {
+            this.formData[descKey] = e.target.value.trim();
+        });
     }
+
 
     // ========== SECTION 2 ==========
     setupSection2() {

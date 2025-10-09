@@ -751,6 +751,53 @@ input:checked + .slider:before {
     margin-top: 12px;
 }
 
+/* Checkbox laranja dos termos */
+.checkbox-container {
+  display: flex;
+  align-items: center;  /* alinha verticalmente */
+  cursor: pointer;
+  font-size: 14px;
+  user-select: none;
+  gap: 8px; /* espaço entre quadrado e texto */
+}
+
+.checkbox-container input {
+  display: none;
+}
+
+.checkmark {
+  flex-shrink: 0;        /* não deixa o quadradinho "amassar" */
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--titulo1);
+  border-radius: 4px;
+  display: inline-block;
+  position: relative;
+  background-color: #fff;
+}
+
+.checkbox-container input:checked ~ .checkmark {
+  background-color: var(--titulo1);
+  border-color: var(--titulo1);
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.checkbox-container a {
+  color: var(--titulo1);
+  text-decoration: underline;
+}
+
+
 @media (max-width: 768px) {
     .header h1 { font-size: 20px; }
     .section-title { font-size: 20px; }

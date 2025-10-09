@@ -143,8 +143,10 @@
                 </div>
             </div>
 
-            <div id="section4" class="form-section">
+              <div id="section4" class="form-section">
                 <h2 class="section-title">Outras Informações</h2>
+
+                <!-- disciplinas -->
                 <div class="input-group">
                     <label>Selecione as disciplinas que você pode lecionar</label>
                     <div class="dropdown">
@@ -164,6 +166,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- nível -->
                 <div class="input-group">
                     <label>Selecione seu nível acadêmico:</label>
                     <div class="groups">
@@ -175,24 +179,23 @@
                         <label class="radio-container"><input type="radio" name="nivel" class="item-radio" value="Técnico"><span class="radio-checkmark"></span> Técnico</label>
                     </div>
                 </div>
+
                 <div class="input-group">
                     <label>Escreva seu curso de formação:</label>
                     <input type="text" id="curso" class="input-field" placeholder="Nome do curso e instituição" required>
                 </div>
 
-                <!-- Inicio Área Experiência -->
+                <!-- experiências com toggles -->
                 <div class="input-group experience-group">
                     <label>Você tem experiência com aulas particulares?</label>
-
                     <div class="toogle">
                         <label>Não</label>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="expAulasToggle">
-                                <span class="slider"></span>
-                            </label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="expAulasToggle">
+                            <span class="slider"></span>
+                        </label>
                         <label>Sim</label>
                     </div>
-
                     <div id="expAulasBox" class="hidden">
                         <textarea id="expAulasText" class="input-field textarea-field" placeholder="Escreva um pouco das suas experiências com aulas particulares"></textarea>
                     </div>
@@ -200,45 +203,48 @@
 
                 <div class="input-group experience-group">
                     <label>Você tem experiência com alunos neuro divergentes?</label>
-
                     <div class="toogle">
                         <label>Não</label>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="expNeuroToggle">
-                                <span class="slider"></span>
-                            </label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="expNeuroToggle">
+                            <span class="slider"></span>
+                        </label>
                         <label>Sim</label>
                     </div>
-
                     <div id="expNeuroBox" class="hidden">
                         <textarea id="expNeuroText" class="input-field textarea-field" placeholder="Escreva um pouco das suas experiências com alunos neuro divergentes"></textarea>
                     </div>
-
                 </div>
 
                 <div class="input-group experience-group">
                     <label>Você tem experiência com TDICs?</label>
-
                     <div class="toogle">
                         <label>Não</label>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="expTdicsToggle">
-                                <span class="slider"></span>
-                            </label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="expTdicsToggle">
+                            <span class="slider"></span>
+                        </label>
                         <label>Sim</label>
                     </div>
-
                     <div id="expTdicsBox" class="hidden">
                         <textarea id="expTdicsText" class="input-field textarea-field" placeholder="Escreva um pouco das suas experiências com Tdics"></textarea>
                     </div>
-
-                    <div class="input-group">
-                        <label for="pix">Digite seu Pix</label>
-                        <input type="text" id="pix" class="input-field" placeholder="Digite seu Pix" required>
-                    </div>
                 </div>
 
-                <!-- Fim area experiêcia -->
+                <!-- pix -->
+                <div class="input-group">
+                    <label for="pix">Digite seu Pix</label>
+                    <input type="text" id="pix" class="input-field" placeholder="Digite seu Pix" required>
+                </div>
+
+                <!-- termos de uso -->
+                <div class="input-group termos-group">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="aceiteTermos" required>
+                        <span class="checkmark"></span>
+                        Eu aceito os <a href="https://docs.google.com/document/d/13YZtlVQR6-A9et6Zg1CXXF6WVRk0oX6fWAwVHXOAieE/edit?usp=sharing" target="_blank">termos de uso</a>
+                    </label>
+                </div>
 
                 <div class="nav-buttons">
                     <button type="button" class="btn btn-prev" onclick="showSection(3)">Voltar</button>
@@ -246,18 +252,15 @@
                 </div>
             </div>
 
+            <!-- sucesso -->
             <div id="section5" class="form-section success-section">
                 <h2 class="success-title">Inscrição Enviada! ✅</h2>
-                <p class="success-message">Obrigado por se inscrever como professor na Master Educação! Em breve, nossa equipe entrará em contato com você para os próximos passos.</p>
-                <div class="contact-info">Mais dúvidas? Entre em contato com: <strong>(82) 9.8886-2575</strong> 📱</div>
+                <p class="success-message">Obrigado por se inscrever como professor na Master Educação!</p>
             </div>
         </form>
     </div>
 
-    <!-- Supabase (CDN único) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-
-    <!-- Script da aplicação (defer para garantir DOM carregado) -->
     <script src="script.js" defer></script>
 </body>
 </html>
